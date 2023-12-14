@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model book {
+  book_id          String        @id
+  title            String?
+  author           String?
+  isbn             String?
+  genre            String?
+  published_date   String?       @db.VarChar(20)
+  available_copies Int?
+  total_copies     Int?
+  image_url        String?
+  description_     String?       @map("description ")
+  transaction      transaction[]
+}
+
+model transaction {
+  transation_id        String  @id
+  user_id              String?
+  book_id              String?
+  borrow_date          String?
+  expected_return_date String?
+  return_date          String?
+  cost                 Float?
+  book                 book?   @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book")
+  user                 user?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
+}
+
+model user {
+  user_id           String        @id
+  username          String?
+  password          String?
+  first_name        String?
+  last_name         String?
+  email             String
+  user_type         String?       @db.VarChar(30)
+  registration_date String?
+  transaction       transaction[]
+}
