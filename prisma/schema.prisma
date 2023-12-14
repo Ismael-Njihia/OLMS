@@ -18,6 +18,8 @@ model book {
   total_copies     Int?
   image_url        String?
   description_     String?       @map("description ")
+  user_id          String?
+  user             user?         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_poster")
   transaction      transaction[]
 }
 
@@ -42,5 +44,6 @@ model user {
   email             String
   user_type         String?       @db.VarChar(30)
   registration_date String?
+  book              book[]
   transaction       transaction[]
 }

@@ -3,6 +3,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import generateRandom from "../util/generateRandom.js";
 import generateSecondSinceEpoch from "../util/generateSecSinceEpoch.js";
 import todaysDate from "../util/todaysDate.js";
+import encryptPassword from "../util/encryptPassword.js";
 
 const getAllUsers = async (req, res) => {
     const users = await prisma.user.findMany();
@@ -43,13 +44,16 @@ const registerUser = asyncHandler(async (req, res) => {
     const user_idINT = generateSecondSinceEpoch() + generateRandom();
     //change the user_id to a string
     const user_id = user_idINT.toString();
+    //encrypt the password
+    const encryptedPassword = await encryptPassword(password);  
+    
     const user_type = "user";
-    const registration_date = todaysDate();
+    const registration_date = todaysDate().toString();
     const user = await prisma.user.create({
         data: {
             user_id,
             username,
-            password,
+            password: encryptedPassword,
             first_name,
             last_name,
             email,
