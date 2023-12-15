@@ -2,6 +2,7 @@ import prisma from "../../db/prisma.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 import generateRandom from "../util/generateRandom.js";
 import generateSecondSinceEpoch from "../util/generateSecSinceEpoch.js";
+import todaysDate from "../util/todaysDate.js";
 
 const getAllTransactions = async (req, res) => {
     const transactions = await prisma.transaction.findMany();
@@ -108,9 +109,71 @@ const registerTransaction = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("Invalid transaction data");
     }
+});
+//update a transaction
+//PUT /api/transactions/:id
+//private
+const updateTransaction = asyncHandler(async(req,res)=>{
 
-    
+})
+//mark transaction as returned
+//PUT api/transactions/:id
+//private
+//also update available_copies of books to +1
+const transactionReturned = asyncHandler(async(req,res)=>{
+    const {id}= req.params;
+
+    //check if it exists
+    const transaction = await prisma.transaction.findUnique({
+        where:{
+            transation_id: id,
+        },
+    });
+
+    if(!transaction){
+        res.status(404);
+        throw new Error("No such Transaction Available")
+    }
+    if(transaction.status === "returned"){
+        res.status(400);
+        throw new Error("Transaction is already done");
+    }
+    const updatedTransaction = await prisma.transaction.update({
+        where:{
+            transation_id: id,
+        },
+        data:{
+            status: "returned",
+            return_date: todaysDate().toString(),
+        },
+    });
+
+    //update the available copies of the book
+    const updatedBook = await prisma.book.update({
+        where:{
+            book_id: updatedTransaction.book_id,
+        },
+        data:{
+            available_copies:{
+                increment: 1
+            },
+        },
+    });
+    if(!updatedBook){
+        res.status(400);
+        throw new Error(" Failed to update boo Info")
+    }
+
+    res.status(200).json({
+        message: "Book Successfully returned and Received",
+        transaction: updateTransaction,
+        updatedBook
+    });
 
 });
 
-export {getAllTransactions, registerTransaction}
+//delete a transaction
+//DELETE /api/transactions/:id
+//Private for admin
+
+export {getAllTransactions, registerTransaction, transactionReturned}
