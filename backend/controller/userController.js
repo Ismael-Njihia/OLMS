@@ -4,6 +4,7 @@ import generateRandom from "../util/generateRandom.js";
 import generateSecondSinceEpoch from "../util/generateSecSinceEpoch.js";
 import todaysDate from "../util/todaysDate.js";
 import encryptPassword from "../util/encryptPassword.js";
+import decryptPassword from "../util/decryptPassword.js";
 
 const getAllUsers = async (req, res) => {
     const users = await prisma.user.findMany();
@@ -76,6 +77,41 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 })
 
+//login a user
+//POST /api/users/login
+//public
+const loginUser = asyncHandler(async (req, res) => {
+    const {email, password} = req.body;
+    if(!email || !password){
+        res.status(400);
+        throw new Error("Please fill in all fields");
+    }
+
+    const user = await prisma.user.findFirst({
+        where: {
+            email: email
+        }
+    });
+    if(!user){
+        res.status(400);
+        throw new Error("Invalid Credentials");
+    }
+    //compare the password with the encrypted password
+    const isMatch = await decryptPassword(password, user.password);
+    if(!isMatch){
+        res.status(400);
+        throw new Error("Invalid Credentials");
+    }
+    res.json({
+        user_id: user.user_id,
+        username: user.username,
+        email: user.email,
+        user_type: user.user_type,
+        registration_date: user.registration_date,
+        token: null
+    })
+})
 
 
-export {getAllUsers, registerUser};
+
+export {getAllUsers, registerUser, loginUser};
