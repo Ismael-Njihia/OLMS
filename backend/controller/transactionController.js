@@ -14,9 +14,14 @@ const getAllTransactions = async (req, res) => {
 //private
 //used by admin and staff
 const registerTransaction = asyncHandler(async (req, res) => {
-    const {borrower_id, book_id, borrow_date,expected_return_date,return_date,cost, staff_id} = req.body; 
+    const {borrower_id, book_id, cost, staff_id} = req.body; 
+    const borrow_date = new Date();
+    //return date is current date plus 7 days
+    const expected_return_date = new Date(borrow_date.getTime() + 7*24*60*60*1000);
+    const return_date = null;
     const status = "borrowed";
     const fine = 0.0;
+    console.log(borrow_date);
     if(!borrower_id){
         res.status(400);
         throw new Error("The borrower needs to be specified");
@@ -144,7 +149,8 @@ const transactionReturned = asyncHandler(async(req,res)=>{
         },
         data:{
             status: "returned",
-            return_date: todaysDate().toString(),
+            return_date: new Date()
+            //return_date: todaysDate().toString(),
         },
     });
 
@@ -175,5 +181,6 @@ const transactionReturned = asyncHandler(async(req,res)=>{
 //delete a transaction
 //DELETE /api/transactions/:id
 //Private for admin
+
 
 export {getAllTransactions, registerTransaction, transactionReturned}
