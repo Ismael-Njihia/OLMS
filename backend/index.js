@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import userRoute from './route/userRoute.js';
 import bookRoute from './route/bookRoute.js';
+import transactionRoute from './route/transactionRoute.js';
 
 dotenv.config();
 const app = express();
@@ -14,7 +15,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoute);
 app.use('/api/books', bookRoute);
-
+app.use('/api/transactions', transactionRoute);
 app.listen(PORT, () => {
     console.log(`Server running on port: http://localhost:${PORT}`);
 })

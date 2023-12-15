@@ -47,7 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
     //encrypt the password
     const encryptedPassword = await encryptPassword(password);  
     
-    const user_type = "user";
+    const user_type = "admin";
     const registration_date = todaysDate().toString();
     const user = await prisma.user.create({
         data: {

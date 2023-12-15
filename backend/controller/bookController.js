@@ -12,11 +12,47 @@ const getAllBooks = async (req, res) => {
 //private
 const registerBook = asyncHandler(async (req, res) => {
     const {title, author,isbn, genre, published_date, available_copies, total_copies, image_url, description, user_id} = req.body;
-
-    if( !title || !author|| !isbn|| !!genre|| !available_copies || !total_copies || !image_url || !description || !user_id){
+    if(!title){
         res.status(400);
-        throw new Error("Please fill in all fields");
+        throw new Error("Title is required");
     }
+    if(!author){
+        res.status(400);
+        throw new Error("Author is required");
+    }
+    if(!isbn){
+        res.status(400);
+        throw new Error("ISBN is required");
+    }   
+    if(!genre){
+        res.status(400);
+        throw new Error("Genre is required");
+    }
+    if(!published_date){
+        res.status(400);
+        throw new Error("Published date is required");
+    }
+    if(!available_copies){
+        res.status(400);
+        throw new Error("Available copies is required");
+    }
+    if(!total_copies){
+        res.status(400);
+        throw new Error("Total copies is required");
+    }
+    if(!image_url){
+        res.status(400);
+        throw new Error("Image URL is required");
+    }
+    if(!description){
+        res.status(400);
+        throw new Error("Description is required");
+    }
+    if(!user_id){
+        res.status(400);
+        throw new Error("User ID is required");
+    }
+    //check if the isbn exists from the book table
     const bookExists = await prisma.book.findFirst({
         where: {
             isbn: isbn

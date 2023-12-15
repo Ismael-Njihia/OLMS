@@ -25,14 +25,17 @@ model book {
 
 model transaction {
   transation_id        String  @id
-  user_id              String?
+  borrower_id          String?
   book_id              String?
   borrow_date          String?
   expected_return_date String?
   return_date          String?
   cost                 Float?
+  status               String
+  fine                 Float?
+  staff_id             String?
   book                 book?   @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book")
-  user                 user?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
+  user                 user?   @relation(fields: [borrower_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
 }
 
 model user {
