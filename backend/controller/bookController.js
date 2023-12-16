@@ -71,6 +71,16 @@ const registerBook = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("User does not exist");
     }
+    //check if the genre exists from the genre table
+    const genreExists = await prisma.genre.findFirst({
+        where: {
+            genre_id: genre
+        }
+    })
+    if(!genreExists){
+        res.status(400);
+        throw new Error("Genre does not exist");
+    }
     
     const book_id = "OLMS"+"/"+generateRandom();
     const book = await prisma.book.create({
@@ -79,13 +89,14 @@ const registerBook = asyncHandler(async (req, res) => {
             title,
             author,
             isbn,
-            genre,
+            
             published_date,
             available_copies,
             total_copies,
             image_url,
             description_: description,
-            user_id
+            user_id,
+            genre_id: genre,
         }
     });
     if(book){
@@ -100,7 +111,8 @@ const registerBook = asyncHandler(async (req, res) => {
             total_copies: book.total_copies,
             image_url: book.image_url,
             description: book.description_,
-            user_id: book.user_id
+            user_id: book.user_id,
+            genre_id: book.genre_id,
         })
 
     }

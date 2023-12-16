@@ -3,7 +3,9 @@ import dotenv from 'dotenv';
 import userRoute from './route/userRoute.js';
 import bookRoute from './route/bookRoute.js';
 import transactionRoute from './route/transactionRoute.js';
+import genreRoute from './route/genreRoute.js';
 import cookieParser from 'cookie-parser';
+
 
 dotenv.config();
 const app = express();
@@ -18,6 +20,7 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoute);
 app.use('/api/books', bookRoute);
 app.use('/api/transactions', transactionRoute);
+app.use('/api/genres', genreRoute);
 app.listen(PORT, () => {
     console.log(`Server running on port: http://localhost:${PORT}`);
 })
