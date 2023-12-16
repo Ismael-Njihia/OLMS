@@ -3,12 +3,14 @@ import dotenv from 'dotenv';
 import userRoute from './route/userRoute.js';
 import bookRoute from './route/bookRoute.js';
 import transactionRoute from './route/transactionRoute.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
+app.use(cookieParser());
 app.get('/', (req, res) => {
     res.json('Hello from .');
 });

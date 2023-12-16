@@ -5,6 +5,8 @@ import generateSecondSinceEpoch from "../util/generateSecSinceEpoch.js";
 import todaysDate from "../util/todaysDate.js";
 import encryptPassword from "../util/encryptPassword.js";
 import decryptPassword from "../util/decryptPassword.js";
+import generateToken from "../util/generateToken.js";
+import jwt from "jsonwebtoken";
 
 const getAllUsers = async (req, res) => {
     const users = await prisma.user.findMany();
@@ -102,16 +104,43 @@ const loginUser = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("Invalid Credentials");
     }
-    res.json({
+
+    //generate the token
+    generateToken(res, user.user_id);
+    res.status(201).json({
         user_id: user.user_id,
         username: user.username,
         email: user.email,
         user_type: user.user_type,
         registration_date: user.registration_date,
-        token: null
+    })
+})
+
+//logout a user
+//GET /api/users/logout
+//private
+
+const logoutUser = asyncHandler(async (req, res) => {
+    //refer the user logged out with email
+    const token = req.cookies.jwt;
+    const secret = process.env.JWT_SECRET;
+    const decoded = jwt.verify(token, secret);
+    const user = await prisma.user.findFirst({
+        where: {
+            user_id: decoded.user_id
+        }
+    });
+    const first_name = user.first_name;
+    const last_name = user.last_name;
+    //logout the user
+    res.cookie("jwt", "logout", {
+        maxAge: 1
+    });
+    res.status(200).json({
+        message: `Goodbye ${first_name} ${last_name}! You have been logged out successfully!`
     })
 })
 
 
 
-export {getAllUsers, registerUser, loginUser};
+export {getAllUsers, registerUser, loginUser, logoutUser};
