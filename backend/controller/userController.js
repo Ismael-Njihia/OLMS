@@ -125,6 +125,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     const token = req.cookies.jwt;
     const secret = process.env.JWT_SECRET;
     const decoded = jwt.verify(token, secret);
+    
     const user = await prisma.user.findFirst({
         where: {
             user_id: decoded.user_id
