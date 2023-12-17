@@ -1,7 +1,7 @@
-.leftSide{
-    background-color: #0805ca;
+.leftSide {
+    background-color: #03117d;
     height: 100vh;
-    width: 20%;
+    width: 20%; /* Set the width to 20% */
     position: fixed;
     top: 0;
     left: 0;
@@ -9,7 +9,7 @@
     overflow-x: hidden;
     padding-top: 20px;
     border-right: 1px solid #e6e6e6;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .leftSideText h1{

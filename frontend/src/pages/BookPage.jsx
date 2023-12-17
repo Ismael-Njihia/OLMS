@@ -1,4 +1,4 @@
-import React from 'react'
+import Layout from '../components/Layout';
 import { useParams } from 'react-router-dom'
 
 const BookPage = () => {
@@ -7,11 +7,11 @@ const BookPage = () => {
 
    const { id } = useParams();
   return (
-    <div>
+    <Layout>
         <h1>
             Book Page {id}
         </h1>
-    </div>
+    </Layout>
   )
 }
 
