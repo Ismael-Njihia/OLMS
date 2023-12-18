@@ -1,4 +1,5 @@
 import Layout from '../components/Layout';
+import Header from '../components/Header';
 import { useParams } from 'react-router-dom'
 
 const BookPage = () => {
@@ -7,11 +8,14 @@ const BookPage = () => {
 
    const { id } = useParams();
   return (
+    <>
+    <Header />
     <Layout>
         <h1>
             Book Page {id}
         </h1>
     </Layout>
+    </>
   )
 }
 

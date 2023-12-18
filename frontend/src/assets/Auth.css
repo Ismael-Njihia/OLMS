@@ -1,0 +1,87 @@
+.wholeContainer{
+    display: flex;
+    border: 2px solid gray;
+}
+.leftLoginSide{
+    width: 45%;
+    height: 100vh;
+    background-color: #f5f5f5;
+    display: flex;
+}
+.rightLoginSide{
+    width: 55%;
+    height: 100vh;
+    background-color: #f5f5f5;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 10px;
+
+}
+.loginForm label{
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.loginForm button{
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+}
+.loginForm h1{
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    text-decoration: none;
+}
+.linkStyle{
+    text-decoration: none;
+}
+.registerLink{
+    text-align: center;
+    margin-top: 20px;
+}
+.registerLink a{
+    text-decoration: none;
+    color: blue;
+    font-size: 15px;
+    
+}
+.registerLink p{
+    font-size: 20px;
+    font-weight: bold;
+}
+.loginForm input{
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid gray;
+    padding-left: 10px;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+.loginForm input:focus{
+    outline: none;
+}
+.loginForm input::placeholder{
+    font-size: 15px;
+}
+.loginImage{
+    width: 100%;
+    border: 10px solid #f5f5f5;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.loginImage img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

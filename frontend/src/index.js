@@ -10,12 +10,16 @@ import store from './store';
 
 import Homepage from './pages/Homepage';
 import BookPage from './pages/BookPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
         <Route index={true} path="/" element={<Homepage />} />
         <Route path="/book/:id" element={<BookPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path='/register' element={<RegisterPage />} />
     </Route>
   )
 );
