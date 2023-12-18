@@ -6,11 +6,11 @@ import '../App.css';
 
 const Header = () => {
   return (
-    <header>
-      <Navbar className='header' bg="dark" variant="dark" expand="lg" collapseOnSelect>
+    <header className='custom-header'>
+      <Navbar className='header'  expand="lg" collapseOnSelect>
         <Container>
           {/* Left Side: Oshwal Library */}
-          <LinkContainer to="/">
+          <LinkContainer to="/" style={{color: "#fff", fontSize:"25px", fontWeight:"bold"}}>
             <Navbar.Brand>Oshwal Library </Navbar.Brand>
           </LinkContainer>
           
@@ -18,12 +18,12 @@ const Header = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <LinkContainer to="/notifications">
+              <LinkContainer to="/notifications" style={{color: "#fff"}}>
                 <Nav.Link>
                   <FaBell />
                 </Nav.Link>
               </LinkContainer>
-              <LinkContainer to="/login">
+              <LinkContainer to="/login" style={{color: "#fff"}}>
                 <Nav.Link>
                   <FaUser /> Sign In
                 </Nav.Link>

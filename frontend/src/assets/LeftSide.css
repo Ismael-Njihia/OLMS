@@ -1,27 +1,39 @@
 .leftSide {
-    background-color: #03117d;
+    background-color: var(--accent-color);
     height: 100vh;
     width: 20%; /* Set the width to 20% */
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1;
+    
     overflow-x: hidden;
-    padding-top: 20px;
+    padding-top: 75px;
     border-right: 1px solid #e6e6e6;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
+.leftSide::after {
+    content: '';
+    position: absolute;
+    top: 63px;
+    left: 0;
+    width: 100%;
+    height: 2px; 
+    background-color: #e6e6e6; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.homeLink{
+    display: flex;
+    align-items: center;
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 20px;
+    padding: 10px;
+    width: 90%;
+    background-color: #140369;
+    border-radius: 5px;
+}
+.homeIcon{
+    margin-right: 10px;
+}
 
-.leftSideText h1{
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 20px;
-    margin-left: 20px;
-}
-.leftSideText p{
-    font-size: 1rem;
-    font-weight: 400;
-    color: #fff;
-    margin-left: 20px;
-}
