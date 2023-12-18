@@ -12,6 +12,7 @@ import Homepage from './pages/Homepage';
 import BookPage from './pages/BookPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import GenrePage from './pages/GenrePage';
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -20,6 +21,7 @@ const routes = createBrowserRouter(
         <Route path="/book/:id" element={<BookPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
+        <Route path='/genres/:id' element={<GenrePage />} />
     </Route>
   )
 );

@@ -21,7 +21,7 @@
     background-color: #e6e6e6; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-.homeLink{
+.homeLink, .dropdown{
     display: flex;
     align-items: center;
     color: var(--primary-color);
@@ -32,8 +32,33 @@
     width: 90%;
     background-color: #140369;
     border-radius: 5px;
+    margin-bottom: 10px;
 }
 .homeIcon{
     margin-right: 10px;
 }
+.dropdown-menu{
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--accent-color);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+.genreLink{
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 15px;
+   
+    border-radius: 5px;
+    margin-bottom: 1px;
+}
+.dropdown:hover .dropdown-menu.show{
+    display: flex;
+}
+
+.dropdown-menu a:hover {
+    background-color: transparent !important;
+  }
 

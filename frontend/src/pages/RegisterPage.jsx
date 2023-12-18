@@ -1,7 +1,7 @@
 import '../assets/Auth.css'
 import { Link } from 'react-router-dom'
 import OshwalImage from '../assets/images/library.jpg'
-import '../assets/Auth.css'
+
 
 const RegisterPage = () => {
   return (
