@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 const Homepage = () => {
 
   const {data: books, isLoading, error} = useFetchBooksQuery();
-  console.log(books);
   return (
    <>
     <Header />

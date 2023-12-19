@@ -1,5 +1,6 @@
 import {AiOutlineHome} from 'react-icons/ai';
 import { BsBoxArrowRight } from 'react-icons/bs';
+import { BiTransfer } from 'react-icons/bi';
 import {useState} from 'react';
 import '../assets/LeftSide.css';
 import { Link } from 'react-router-dom';
@@ -9,7 +10,8 @@ import { Modal } from 'react-bootstrap';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLogoutMutation} from "../slices/usersApiSlice";
 import { logout } from '../slices/authSlice';
-import {toast} from 'react-toastify'
+import {toast} from 'react-toastify';
+import { BsPeople } from 'react-icons/bs';
 
 const LeftSide = () => {
   const {data: genres, isLoading} = useFetchGenresQuery();
@@ -40,9 +42,9 @@ const handleShowModal = () => setShowModal(true);
     <div className='leftSideContainer'>
     <div className='importantLinks'>
         <div className='links'>
-            <button to='/' className='homeLink'>
+            <Link to='/' className='homeLink'>
                 <AiOutlineHome className='homeIcon'/> Home
-            </button>
+            </Link>
         </div>
         <div>
           <Dropdown className='dropdown'>
@@ -68,7 +70,34 @@ const handleShowModal = () => setShowModal(true);
         </div>
         
        </div>
-       {/**Show on when there is userInfo */}
+       {/**Show transaction button to the User who are admin and staff */}
+       {
+        userInfo && (userInfo.user_type === 'admin' || userInfo.user_type === 'staff') && (
+          <div className='transactionContainer'>
+            <div className='links'>
+                <Link to='/transactions' className='homeLink'>
+                    <BiTransfer className='homeIcon'/> Transactions
+                </Link>
+                </div>
+            </div>
+        )
+       }
+
+
+       {/**Show  when there users when the userInfo.user_type */}
+       {
+        userInfo && userInfo.user_type === 'admin' && (
+          <div className='userContainer'>
+            <div className='links'>
+                <Link to='/users' className='homeLink'>
+                    <BsPeople className='homeIcon'/> users
+                </Link>
+                </div>
+            </div>
+        ) 
+       }
+
+       {/**Show on Logout when there is userInfo */}
        {userInfo && (
        <div className='logoutContainer'>
         <div className='links'>

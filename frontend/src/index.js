@@ -14,6 +14,9 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import GenrePage from './pages/GenrePage';
 import Profile from './pages/Profile';
+import UsersPage from './pages/UsersPage';
+import TransactionPage from './pages/TransactionPage';
+import UserPage from './pages/UserPage';
 
 //Authorization Control
 import AdminRoute from './components/AdminRoute';
@@ -31,12 +34,16 @@ const routes = createBrowserRouter(
         <Route path='/' element={<UserRoute/>} >
          <Route path="/book/:id" element={<BookPage />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/transactions' element={<TransactionPage />} />
         </Route>
        
         <Route path='/' element={<StaffRoute/>} >
+          
 
         </Route>
         <Route path='/' element={<AdminRoute/>} >
+          <Route path='/users' element={<UsersPage />} />
+          <Route path='/user/:id' element={<UserPage />} />
 
           </Route>
     </Route>
