@@ -3,8 +3,10 @@ import { FaBell, FaUser } from 'react-icons/fa';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import '../App.css';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
+  const { userInfo } = useSelector((state) => state.auth);
   return (
     <header className='custom-header'>
       <Navbar className='header'  expand="lg" collapseOnSelect>
@@ -23,11 +25,19 @@ const Header = () => {
                   <FaBell />
                 </Nav.Link>
               </LinkContainer>
+              {userInfo ? (
+                <LinkContainer to="/profile" style={{color: "#fff"}}>
+                  <Nav.Link>
+                    <FaUser /> {userInfo.username}
+                  </Nav.Link>
+                </LinkContainer>
+              ) : 
               <LinkContainer to="/login" style={{color: "#fff"}}>
                 <Nav.Link>
                   <FaUser /> Sign In
                 </Nav.Link>
               </LinkContainer>
+              }
             </Nav>
           </Navbar.Collapse>
         </Container>

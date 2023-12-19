@@ -6,6 +6,6 @@ import { authenticateToken, admin, staff } from "../middleware/authMiddleware.js
 router.get("/", authenticateToken,getAllUsers);
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.get("/logout",authenticateToken, logoutUser);
+router.get("/logout", logoutUser);
 
 export default router;

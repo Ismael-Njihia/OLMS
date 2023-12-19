@@ -13,15 +13,32 @@ import BookPage from './pages/BookPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import GenrePage from './pages/GenrePage';
+import Profile from './pages/Profile';
 
+//Authorization Control
+import AdminRoute from './components/AdminRoute';
+import UserRoute from './components/UserRoute';
+import StaffRoute from './components/StaffRoute';
 const routes = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
         <Route index={true} path="/" element={<Homepage />} />
-        <Route path="/book/:id" element={<BookPage />} />
+        
         <Route path="/login" element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/genres/:id' element={<GenrePage />} />
+
+        <Route path='/' element={<UserRoute/>} >
+         <Route path="/book/:id" element={<BookPage />} />
+          <Route path='/profile' element={<Profile />} />
+        </Route>
+       
+        <Route path='/' element={<StaffRoute/>} >
+
+        </Route>
+        <Route path='/' element={<AdminRoute/>} >
+
+          </Route>
     </Route>
   )
 );

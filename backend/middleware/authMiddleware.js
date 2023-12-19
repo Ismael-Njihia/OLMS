@@ -9,8 +9,8 @@ const secret = process.env.JWT_SECRET;
 const authenticateToken = asyncHandler(async(req, res, next) =>{
     const token = req.cookies.jwt;
     if(!token){
-        res.status(401);
-        throw new Error("Unauthorized, No token found!");
+        res.status(401).json({ error: "Unauthorized, No token found!" });
+        return;
     }
     const decoded = jwt.verify(token, secret);
     //find user deselecting the password
@@ -27,8 +27,8 @@ const authenticateToken = asyncHandler(async(req, res, next) =>{
         }
     });
     if(!user){
-        res.status(401);
-        throw new Error("Unauthorized, No user found!");
+        res.status(401).json({ error: "Unauthorized, No token found!" });
+        return;
     }
     req.user = user;
     next();
@@ -39,8 +39,8 @@ const admin = asyncHandler(async(req, res, next) =>{
     if(req.user && req.user.user_type === "admin"){
         next();
     }else{
-        res.status(401);
-        throw new Error("Unauthorized as an admin!");
+        res.status(401).json({ error: "Unauthorized as an admin!" });
+       return;
     }
 });
 
@@ -49,8 +49,9 @@ const staff = asyncHandler(async(req, res, next) =>{
     if(req.user && req.user.user_type === "staff"){
         next();
     }else{
-        res.status(401);
-        throw new Error("Unauthorized as a staff!");
+        res.status(401).json({ error: "Unauthorized as a staff!" });
+         return;
+        
     }
 })
 

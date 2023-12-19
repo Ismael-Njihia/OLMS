@@ -50,7 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
     //encrypt the password
     const encryptedPassword = await encryptPassword(password);  
     
-    const user_type = "admin";
+    const user_type = "staff";
     const registration_date = todaysDate().toString();
     const user = await prisma.user.create({
         data: {
@@ -65,6 +65,8 @@ const registerUser = asyncHandler(async (req, res) => {
         }
     });
     if(user){
+       //generate the token
+       generateToken(res, user.user_id);
         res.status(201).json({
             user_id: user.user_id,
             username: user.username,
@@ -85,8 +87,8 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
     const {email, password} = req.body;
     if(!email || !password){
-        res.status(400);
-        throw new Error("Please fill in all fields");
+        res.status(400).json({ error: "Please fill in all fields" });
+        
     }
 
     const user = await prisma.user.findFirst({
@@ -95,14 +97,14 @@ const loginUser = asyncHandler(async (req, res) => {
         }
     });
     if(!user){
-        res.status(400);
-        throw new Error("Invalid Credentials");
+        res.status(400).json({ error: "Invalid Credentials" });
+        return;
     }
     //compare the password with the encrypted password
     const isMatch = await decryptPassword(password, user.password);
     if(!isMatch){
-        res.status(400);
-        throw new Error("Invalid Credentials");
+        res.status(400).json({ error: "Invalid Credentials" });
+        return;
     }
 
     //generate the token
@@ -121,24 +123,12 @@ const loginUser = asyncHandler(async (req, res) => {
 //private
 
 const logoutUser = asyncHandler(async (req, res) => {
-    //refer the user logged out with email
-    const token = req.cookies.jwt;
-    const secret = process.env.JWT_SECRET;
-    const decoded = jwt.verify(token, secret);
-    
-    const user = await prisma.user.findFirst({
-        where: {
-            user_id: decoded.user_id
-        }
-    });
-    const first_name = user.first_name;
-    const last_name = user.last_name;
-    //logout the user
-    res.cookie("jwt", "logout", {
-        maxAge: 1
-    });
-    res.status(200).json({
-        message: `Goodbye ${first_name} ${last_name}! You have been logged out successfully!`
+    res.cookie("jwt", "",{
+        expires: new Date(0),
+        httpOnly: true
+    })
+    res.status(201).json({
+        message: "User logged out successfully"
     })
 })
 
