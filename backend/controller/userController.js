@@ -6,7 +6,6 @@ import todaysDate from "../util/todaysDate.js";
 import encryptPassword from "../util/encryptPassword.js";
 import decryptPassword from "../util/decryptPassword.js";
 import generateToken from "../util/generateToken.js";
-import jwt from "jsonwebtoken";
 
 const getAllUsers = async (req, res) => {
     const users = await prisma.user.findMany();

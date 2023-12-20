@@ -7,7 +7,11 @@ export const bookApiSlice = apiSlice.injectEndpoints({
             query: () => BOOK_URL,
             providesTags: ["Books"],
         }),
+        getBookById: builder.query({
+            query: (id) => `${BOOK_URL}/${id}`,
+            providesTags: ["Book"],
+        }),
     }),
 });
 
-export const { useFetchBooksQuery } = bookApiSlice;
+export const { useFetchBooksQuery,useGetBookByIdQuery } = bookApiSlice;

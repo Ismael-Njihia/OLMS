@@ -12,25 +12,31 @@ model book {
   title            String?
   author           String?
   isbn             String?
-  genre            String?
   published_date   String?       @db.VarChar(20)
   available_copies Int?
   total_copies     Int?
   image_url        String?
   description_     String?       @map("description ")
+  user_id          String?
+  genre_id         String?
+  genre            genre?        @relation(fields: [genre_id], references: [genre_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_genre")
+  user             user?         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_poster")
   transaction      transaction[]
 }
 
 model transaction {
-  transation_id        String  @id
-  user_id              String?
+  transation_id        String    @id
+  borrower_id          String?
   book_id              String?
+  cost                 Float?
+  status               String
+  fine                 Float?
+  staff_id             String?
+  return_date          DateTime? @db.Date
   borrow_date          String?
   expected_return_date String?
-  return_date          String?
-  cost                 Float?
-  book                 book?   @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book")
-  user                 user?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
+  book                 book?     @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book")
+  user                 user?     @relation(fields: [borrower_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
 }
 
 model user {
@@ -42,5 +48,14 @@ model user {
   email             String
   user_type         String?       @db.VarChar(30)
   registration_date String?
+  book              book[]
   transaction       transaction[]
-}px
+}
+
+model genre {
+  genre_id   String    @id
+  genre_name String?
+  added_on   DateTime? @db.Date
+  user_id    String?
+  book       book[]
+}

@@ -5,7 +5,13 @@ import generateSecondSinceEpoch from "../util/generateSecSinceEpoch.js";
 import todaysDate from "../util/todaysDate.js";
 
 const getAllTransactions = async (req, res) => {
-    const transactions = await prisma.transaction.findMany();
+    const transactions = await prisma.transaction.findMany({
+        include: {
+            user: true,
+            book: true,
+        }
+    });
+    
     res.json(transactions);
 };
 
@@ -15,9 +21,12 @@ const getAllTransactions = async (req, res) => {
 //used by admin and staff
 const registerTransaction = asyncHandler(async (req, res) => {
     const {borrower_id, book_id, cost, staff_id} = req.body; 
-    const borrow_date = new Date();
-    //return date is current date plus 7 days
-    const expected_return_date = new Date(borrow_date.getTime() + 7*24*60*60*1000);
+    const borrow_date = todaysDate().toString();
+    //example of borrow_date is "borrow_date": "1703075955975",
+    //example of expected_return_date is "expected_return_date": "1705687755975",
+    //add 7 days to the borrow_date for expected_return_date
+
+    const expected_return_date = (todaysDate() + 604800000).toString();
     const return_date = null;
     const status = "borrowed";
     const fine = 0.0;

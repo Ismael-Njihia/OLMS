@@ -25,7 +25,9 @@ const UsersPage = () => {
                 <th>Registration Date</th>
                 <th>User Type</th>
                 <th>Username</th>
-                <th>Action</th>
+                <th>EDIT</th>
+                <th>DELETE</th>
+
               </tr>
             </thead>
             <tbody>
@@ -40,7 +42,11 @@ const UsersPage = () => {
                   <td>{user.username}</td>
                   <td>
                     {/* Wrap user_id with Link for user/id */}
-                    <Link to={`/user/${user.user_id}`}>View Details</Link>
+                    <Link to={`/user/${user.user_id}`}>EDIT</Link>
+
+                  </td>
+                  <td>
+                    <button>DELETE</button>
                   </td>
                 </tr>
               ))}

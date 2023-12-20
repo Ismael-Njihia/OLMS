@@ -54,7 +54,13 @@ const LoginPage = () => {
             <form>
                 <div className='form-group'>
                     <label>Email</label>
-                    <input type='email' className='form-control' placeholder='Enter Email' onChange={handleEmailChange} required value={email}/>
+                    <input 
+                    type='email'
+                    //pick email from state
+                    
+                    placeholder='Enter Email' 
+                    onChange={handleEmailChange} 
+                    required value={email}/>
                 </div>
                 <div className='form-group'>
                     <label>Password</label>

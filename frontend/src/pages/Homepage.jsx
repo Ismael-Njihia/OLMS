@@ -4,17 +4,37 @@ import {useFetchBooksQuery} from '../slices/BooksApiSlice';
 import { Row, Col } from "react-bootstrap";
 import '../assets/HomePage.css'
 import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import { Modal } from "react-bootstrap";
+import { useState } from "react";
 
 const Homepage = () => {
 
   const {data: books, isLoading, error} = useFetchBooksQuery();
+  const userInfo = useSelector((state) => state.auth);
+  const userType = localStorage.getItem('user_type');
+
+  const userType_ = userType?.replace(/['"]+/g, '');
+  const isAdmin = userType_ === 'admin';
+  const isStaff = userType_ === 'staff';
+
+  //Modal here
+  const [showModal, setShowModal] = useState(false);
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
   return (
    <>
     <Header />
     <Layout>
      
       <div className='booksContainer'>
+        {
+          userInfo && (isAdmin || isStaff) && (
+            <button style={{marginBottom: "10px"}} onClick={handleShowModal}>
+              Add BOOK
+            </button>
+          )
+        }
         {isLoading ? (
           <h3>Loading...</h3>
         ) : error ? (
@@ -59,8 +79,29 @@ const Homepage = () => {
 </Row>
 
         )}
+         {/* Modal here */}
+    <Modal show={showModal} onHide={handleCloseModal}>
+      <Modal.Header closeButton>
+        <Modal.Title>ADD A BOOK</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+
+        </Modal.Body>
+        <Modal.Footer>
+        <button className='btn btn-danger' onClick={handleCloseModal}>
+          Close
+          </button>
+          <button className='btn btn-primary' onClick={handleCloseModal}>
+            save changes
+            </button>
+        </Modal.Footer>
+      </Modal>
        </div>
+       
     </Layout>
+
+   
    </>
   )
 }

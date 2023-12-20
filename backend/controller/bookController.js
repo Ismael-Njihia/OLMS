@@ -3,7 +3,8 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import generateRandom from "../util/generateRandom.js";
 
 const getAllBooks = async (req, res) => {
-    const books = await prisma.book.findMany();
+    const books = await prisma.book.findMany(
+    );
     res.json(books);
 };
 
@@ -119,7 +120,29 @@ const registerBook = asyncHandler(async (req, res) => {
 
 
 });
+//getting a book by id
+//GET /api/books/:id
+//Public
+const getBookById = asyncHandler(async (req, res) => {
+ const {id} = req.params;
+ const BookId = 'OLMS/' + id;
+
+    const book = await prisma.book.findFirst({
+        where: {
+            book_id: BookId
+        },
+        include: {
+            genre: true,
+            user: true,
+        }
+    });
+    if(!book){
+        res.status(404).json({ error: "Book not found" });
+        return;
+    }
+    res.json(book);
+});
 
 
 
-export {getAllBooks, registerBook}
+export {getAllBooks, registerBook, getBookById}
