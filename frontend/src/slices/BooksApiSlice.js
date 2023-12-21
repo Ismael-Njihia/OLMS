@@ -11,7 +11,17 @@ export const bookApiSlice = apiSlice.injectEndpoints({
             query: (id) => `${BOOK_URL}/${id}`,
             providesTags: ["Book"],
         }),
+        addBook: builder.mutation({
+            query: (body) => ({
+                url: `${BOOK_URL}/register`,
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: ["Books"],
+        }),
     }),
 });
 
-export const { useFetchBooksQuery,useGetBookByIdQuery } = bookApiSlice;
+export const { useFetchBooksQuery,
+    useAddBookMutation,
+    useGetBookByIdQuery } = bookApiSlice;

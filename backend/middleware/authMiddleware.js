@@ -8,30 +8,38 @@ const secret = process.env.JWT_SECRET;
 
 const authenticateToken = asyncHandler(async(req, res, next) =>{
     const token = req.cookies.jwt;
+    
     if(!token){
         res.status(401).json({ error: "Unauthorized, No token found!" });
         return;
     }
-    const decoded = jwt.verify(token, secret);
-    //find user deselecting the password
-    const user = await prisma.user.findFirst({
-        where: {
-            user_id: decoded.user_id
-        },
-        select: {
-            user_id: true,
-            username: true,
-            email: true,
-            user_type: true,
-            registration_date: true
+    try {
+        const decoded = jwt.verify(token, secret);
+       
+        const user = await prisma.user.findFirst({
+            where: {
+                user_id: decoded.user_id
+            },
+            select:{
+                user_id: true,
+                username: true,
+                email: true,
+                user_type: true,
+                registration_date: true,
+            }
+        });
+        if(!user){
+            res.status(404).json({ error: "User not found" });
+            return;
         }
-    });
-    if(!user){
-        res.status(401).json({ error: "Unauthorized, No token found!" });
-        return;
+        req.user = user;
+        next();
+        
+    } catch (error) {
+        console.error(error);
+        res.status(401).json({ error: "Unauthorized, Invalid token!" });
+        
     }
-    req.user = user;
-    next();
 });
 
 //Admin Middleware

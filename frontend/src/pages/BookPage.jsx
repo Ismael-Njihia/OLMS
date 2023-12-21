@@ -54,9 +54,9 @@ const BookPage = () => {
             </ListGroup.Item>
             <ListGroup.Item>
               <h6>{ book?.available_copies > 0 ?(
-                <p>Available</p>
+                <p style={{color:"green", fontWeight:"bold"}}>Available</p>
               ) : (
-                <p>Not Available</p>
+                <p style={{color:"red", fontWeight:"bold"}}>Not Available</p>
               )
               }</h6>
             </ListGroup.Item>
