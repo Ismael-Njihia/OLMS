@@ -3,8 +3,9 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import generateRandom from "../util/generateRandom.js";
 
 const getAllBooks = async (req, res) => {
-    const books = await prisma.book.findMany(
-    );
+    const books = await prisma.book.findMany({
+  
+    });
     res.json(books);
 };
 

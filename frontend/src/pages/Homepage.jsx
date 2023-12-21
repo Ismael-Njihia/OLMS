@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { Modal,Form, FormGroup } from "react-bootstrap";
 import { useState } from "react";
 import { useFetchGenresQuery } from "../slices/GenreApiSlice";
-import {useAddBookMutation} from '../slices/BooksApiSlice';	
+import {useAddBookMutation, useUploadImageMutation} from '../slices/BooksApiSlice';	
 import {toast } from 'react-toastify';
 
 const Homepage = () => {
@@ -16,6 +16,7 @@ const Homepage = () => {
   const {data: books, isLoading, error} = useFetchBooksQuery();
   const {data: genres} = useFetchGenresQuery();
   const [addBook, {isLoading: loadingCreatingBook}] = useAddBookMutation();
+  const [uploadImage, {isLoading: loadingUploadingImage}] = useUploadImageMutation();
 
   const userInfo = useSelector((state) => state.auth);
   const userType = localStorage.getItem('user_type');
@@ -33,13 +34,38 @@ const Homepage = () => {
   const [image_url, bookImageUrl] = useState('');
   const [description_, bookDescription] = useState('');
    
+// uploading an Image
+const uploadImageHandler = async(e)=>{
+  const formData = new FormData();
+  formData.append('image', e.target.files[0]);
+
+  try {
+    const res = await uploadImage(formData).unwrap();
+    bookImageUrl(res.image);
+    toast.success(res.message)
+
+  } catch (error) {
+    console.log(error);
+    toast.error(error?.data?.error || 'Something went wrong');
+  }
+}
+
   //add book
   const handleCreateBook = async (e) => {
+    e.preventDefault();
     if(!title || !author || !isbn || !genre || !published_date || !total_copies || !image_url || !description_){
       toast.error('Please fill all fields');
       return;
     }
-    e.preventDefault();
+    if(isNaN(total_copies)){
+      toast.error('Total copies must be a number');
+      return;
+    }
+    if(total_copies < 1){
+      toast.error('Total copies must be greater than 0');
+      return;
+    }
+   
     const bookDetails = {
       title,
       author,
@@ -115,7 +141,7 @@ const Homepage = () => {
               )}
               <div className="bookCard__image" style={{height: "160px", overflow: "hidden"}}>
                 <img
-                  src={book.image}
+                  src={book?.image_url}
                   alt={book.title}
                   style={{width: "100%", height:"100%", objectFit:"cover", objectPosition:"top"}}/>
                 </div>
@@ -216,12 +242,22 @@ const Homepage = () => {
               type='text'
               placeholder='Enter Book Image URL'
               value={image_url}
+              disabled
+              required
               onChange={(e) => bookImageUrl(e.target.value)}
-            ></Form.Control>
+            >
+            </Form.Control>
+            <br/>
+            <Form.Control
+            type="file"
+            id="image-file"
+            label="choose Image File"
+            custom
+            onChange={uploadImageHandler}
+            >
+            </Form.Control>
           </Form.Group>
-
-          
-
+           <br/>
           <Form.Group controlId='description'>
             <Form.Label style={{fontSize:'14px', fontWeight:"bold"}}>Book Description</Form.Label>
             <Form.Control style={{fontSize:'14px', marginBottom:"15px"}}

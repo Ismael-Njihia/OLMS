@@ -15,6 +15,8 @@ const BookPage = () => {
     const lastFour = decodedId.substr(decodedId.length - 4);
     //get book by id
     const {data: book, isLoading, error} = useGetBookByIdQuery(lastFour);
+    console.log(book);
+    console.log(book?.image_url)
    const userInfo = useSelector((state) => state.auth);
    //get user_type in local storage
     const userType = localStorage.getItem('user_type');
@@ -24,6 +26,8 @@ const BookPage = () => {
     const isAdmin = userType_ === 'admin';
     //check if user_type is staff
     const isStaff = userType_ === 'staff';
+
+    
 
   return (
     <>
@@ -37,7 +41,7 @@ const BookPage = () => {
       <Row>
         <Col md={5}>
           <div className=''>
-          <Image className="" src={book?.image} alt={book?.title} fluid />
+          <Image className="" src={book?.image_url} alt={book?.title} fluid />
           </div>
           <ListGroup variant='flush'>
             <ListGroup.Item>
