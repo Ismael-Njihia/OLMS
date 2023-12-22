@@ -17,7 +17,7 @@ export const transactionApiSlice = apiSlice.injectEndpoints({
         }),
         createTransaction: builder.mutation({
             query: (transaction) => ({
-                url: `${TRANSACTION_URL}/transactions/register`,
+                url: `${TRANSACTION_URL}/register`,
                 method: 'POST',
                 body: transaction
             }),

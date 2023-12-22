@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetUsersQuery } from '../slices/usersApiSlice';
 import '../assets/Modal.css';
+import {useCreateTransactionMutation} from '../slices/TransactionApiSlice'
+import { toast } from 'react-toastify';
 
 const CustomModal = ({ show, handleClose }) => {
   const { id } = useParams();
@@ -10,6 +12,11 @@ const CustomModal = ({ show, handleClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [borrower_id, setBorrower_id] = useState(null);
+
+  console.log(borrower_id)
+
+  const [createTransaction, {isLoading: isCreating}] = useCreateTransactionMutation()
 
   // Handle user input change
   const handleInputChange = (e) => {
@@ -32,9 +39,37 @@ const CustomModal = ({ show, handleClose }) => {
   // Handle user click on search result
   const handleUserClick = (user) => {
     setSelectedUser(user);
+    console.log(user);
     setSearchTerm(user.email);
-    setSearchResults([]); // Clear search results after selecting a user
+    setBorrower_id(user.user_id);
+    setSearchResults([]); 
   };
+  //create transaction
+  const handleTransaction = async (e)=>{
+    e.preventDefault();
+    const transactionDetails ={
+        book_id: id,
+        borrower_id: borrower_id,
+        cost: 100
+    }
+    try {
+        const res = await createTransaction(transactionDetails).unwrap();
+        toast.success(res.message || 'Transaction created successfully');
+        //clear form
+        setSearchTerm('');
+        setSelectedUser(null);
+        setSearchResults([]);
+        //close modal
+        handleClose();
+        //refresh page
+        window.location.reload();
+    } catch (error) {
+        toast.error(error.data.message || 'Something went wrong');
+        console.log(error);
+        
+    }
+
+  }
 
   return (
     <div className="modalContainer">
@@ -64,7 +99,7 @@ const CustomModal = ({ show, handleClose }) => {
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={handleTransaction}>
             Confirm
           </Button>
         </Modal.Footer>

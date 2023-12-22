@@ -4,7 +4,7 @@ import { getAllTransactions, registerTransaction,transactionReturned } from '../
 import { authenticateToken, admin, staff } from '../middleware/authMiddleware.js';
 
 router.get('/', authenticateToken,getAllTransactions);
-router.post('/register', registerTransaction);
+router.post('/register', authenticateToken,registerTransaction);
 router.put('/:id', transactionReturned)
 
 

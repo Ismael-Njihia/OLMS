@@ -9,6 +9,9 @@ const getAllTransactions = async (req, res) => {
         include: {
             user: true,
             book: true,
+        },
+        orderBy: {
+            borrow_date: "asc",
         }
     });
     
@@ -20,7 +23,8 @@ const getAllTransactions = async (req, res) => {
 //private
 //used by admin and staff
 const registerTransaction = asyncHandler(async (req, res) => {
-    const {borrower_id, book_id, cost, staff_id} = req.body; 
+    const {borrower_id, book_id, cost} = req.body;
+    const staff_id = req.user.user_id;
     const borrow_date = todaysDate().toString();
     //example of borrow_date is "borrow_date": "1703075955975",
     //example of expected_return_date is "expected_return_date": "1705687755975",
@@ -117,7 +121,7 @@ const registerTransaction = asyncHandler(async (req, res) => {
             fine,
             staff_id,
             book
-        })
+        }).message(transaction_id)
     }
     else{
         res.status(400);
