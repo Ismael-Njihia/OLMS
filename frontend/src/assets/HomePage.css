@@ -71,10 +71,6 @@ bookImage img{
     font-weight: 600;
    margin-top: 10px;
 }
-.custom-label.form-label{
-    font-size: 70px;
-    font-weight: 600;
-    margin: 0;
-}
+/*form label In bootstrap Form.Label*/
 
 

@@ -2,10 +2,9 @@ import Layout from "../components/Layout"
 import Header from "../components/Header"
 import { useSelector } from "react-redux"
 import {useGetTransactionsQuery} from "../slices/TransactionApiSlice"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Table } from "react-bootstrap"
 import {toast} from 'react-toastify';
-
 
 const TransactionPage = () => {
   const userInfo = useSelector((state) => state.auth)
@@ -38,7 +37,9 @@ const TransactionPage = () => {
             <th>fine (KSH) </th>
             <th> Expected Return Date</th>
             <th> Actual Return Date</th>
+            <th>View</th>
             <th> Status</th>
+
 
           </tr>
         </thead>
@@ -62,6 +63,11 @@ const TransactionPage = () => {
                   <p>-</p>
                   ):(
                 new Date(Number(transaction.return_date)).toLocaleString())}</td>
+                <td>
+                  <Link to={`/transaction/${transaction.transation_id}`}>
+                    View
+                  </Link>
+                </td>
                 <td>{transaction.status === "borrowed" ?(
                   <button> Complete</button>
                 ):(

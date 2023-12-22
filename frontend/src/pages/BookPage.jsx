@@ -6,8 +6,20 @@ import '../assets/HomePage.css'
 import { Link } from 'react-router-dom';
 import {Row, Col, Image, ListGroup, Card, Button} from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import CustomModal from '../components/CustomModal';
+import { useState } from 'react';
+
 
 const BookPage = () => {
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  }
+  const handleCloseModal = () => {
+    setShowModal(false);
+  }
     //get id in url
     const {id} = useParams();
     const decodedId = decodeURIComponent(id);
@@ -145,6 +157,40 @@ const BookPage = () => {
                   )
                 }
                 </ListGroup.Item>
+
+                <ListGroup.Item>
+                {
+                  (userInfo && (isStaff || isAdmin))&&(
+                <Button 
+                className='btn-varient-info btn-block'
+                type='button'
+                disabled={book?.available_copies === 0}
+                onClick={handleShowModal}
+                >
+                 Give to User
+                </Button>
+                  )
+                }
+                </ListGroup.Item>
+                {/**Render the Modal */}
+                <CustomModal show={showModal} handleClose={handleCloseModal} />
+
+                <ListGroup.Item>
+                {
+                  (userInfo && (isStaff || isAdmin))&&(
+                <Button 
+                className='btn-varient-info btn-block'
+                type='button'
+                
+                >
+                 Edit
+                </Button>
+                  )
+                }
+                </ListGroup.Item>
+
+             
+                
             </ListGroup>
           </Card>
 
