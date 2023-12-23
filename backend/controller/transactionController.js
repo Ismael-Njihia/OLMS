@@ -149,8 +149,7 @@ const transactionReturned = asyncHandler(async(req,res)=>{
     });
 
     if(!transaction){
-        res.status(404);
-        throw new Error("No such Transaction Available")
+        res.status(400).json({Transaction: "Does not exist"});
     }
     if(transaction.status === "returned"){
         res.status(400);
@@ -190,10 +189,32 @@ const transactionReturned = asyncHandler(async(req,res)=>{
     });
 
 });
+//get a transaction
+//GET /api/transactions/:id
+//private
+//used by admin and staff
+const getTransaction = asyncHandler(async(req,res)=>{
+    const {id}= req.params;
+    const transaction = await prisma.transaction.findUnique({
+        where:{
+            transation_id: id,
+        },
+        include:{
+            user: true,
+            book: true,
+        },
+    });
+    if(!transaction){
+        res.status(400).json({Transaction: "Does not exist"});
+    }
+    res.status(200).json(transaction);
+});
 
 //delete a transaction
 //DELETE /api/transactions/:id
 //Private for admin
 
 
-export {getAllTransactions, registerTransaction, transactionReturned}
+
+
+export {getAllTransactions,getTransaction, registerTransaction, transactionReturned}

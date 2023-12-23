@@ -11,7 +11,7 @@ export const transactionApiSlice = apiSlice.injectEndpoints({
         }),
         getTransaction: builder.query({
             query: (id) => ({
-                url: `${TRANSACTION_URL}/transactions/${id}`,
+                url: `${TRANSACTION_URL}/${id}`,
                 method: 'GET'
             })
         }),
