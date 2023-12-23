@@ -90,7 +90,7 @@ const CustomModal = ({ show, handleClose }) => {
           <ul className='unOrderedList'>
             {searchResults.map((user) => (
               <li key={user.id} onClick={() => handleUserClick(user)}>
-                {user.email}
+                {user.email + " " + "Name: "+ user.first_name +" "+ user.last_name}
               </li>
             ))}
           </ul>
