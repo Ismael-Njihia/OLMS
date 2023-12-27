@@ -22,7 +22,7 @@ const IndividualPage = () => {
             {isLoading && <h2>Loading...</h2>}
             <Row>
               <h1 style={{ marginLeft:"10px", textAlign:"center",marginRight:"10px"}}>Transaction Receipt</h1>
-              <Col md={5}>
+              <Col md={4}>
                 <div className='transaction Info'>
                   <ListGroup variant='flush'>
                    <ListGroup.Item>
@@ -32,12 +32,76 @@ const IndividualPage = () => {
                       <h6>Borrowed On: {new Date(Number(transactionInfo?.borrow_date)).toLocaleDateString()}</h6>
                     </ListGroup.Item>
                     <ListGroup.Item>
-                      
+                      <h6>Expected Return Date: {new Date(Number(transactionInfo?.expected_return_date)).toLocaleDateString()}</h6>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <h6>Cost: {transactionInfo.cost} </h6>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <h6>Fine: {transactionInfo.fine} </h6>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <h6>Status: {transactionInfo.status} </h6>
                     </ListGroup.Item>
                   </ListGroup>
                 </div>
                 </Col>
+
+                {/**User Info in a Col */}
+                <Col md={4}>
+                  <div className='userInfo'>
+                    <ListGroup variant='flush'>
+                    <ListGroup.Item>
+                        <h6>User Id: {transactionInfo.user.user_id}</h6>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                      <h6>Borrorwer's Name:  {transactionInfo.user.first_name + " " + transactionInfo.user.last_name}</h6>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                      <h6>Email:  {transactionInfo.user.email}</h6>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <h6>Username: {transactionInfo.user.username}</h6>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <h6>Registration Date: {new Date(Number(transactionInfo.user.registration_date)).toLocaleDateString()}</h6>
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </div>
+                </Col>
+
+                {/**Book Info in a Col */}
+                <Col md={4}>
+                  <div className='bookInfo'>
+                    <ListGroup variant='flush'>
+                    <ListGroup.Item>
+                        <h6>Book Id: {transactionInfo.book.book_id}</h6>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <h6>Title: {transactionInfo.book.title}</h6>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <h6>Author: {transactionInfo.book.author}</h6>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <h6>ISBN: {transactionInfo.book.isbn}</h6>
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <h6>Year of Publishing: {transactionInfo.book.published_date}</h6>
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </div>
+                </Col>
             </Row>
+
+            {/**Show Button when TransactionInfo.status === "borrowed" */}
+            {transactionInfo.status === "borrowed" ?(
+              <Button style={{marginTop: "25px"}} variant="primary" size="md" block>
+                Complete Transaction
+              </Button>
+            ):(
+              <p></p>
+            )}
         </Layout>
     </>
   )
