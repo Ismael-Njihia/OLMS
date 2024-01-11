@@ -1,0 +1,30 @@
+.cardOne{
+    background-color: #e5d013;
+    font-weight: bold;
+    color: #fff;
+}
+.cardTwo{
+    background-color: #B22222;
+    font-weight: bold;
+    color: #fff;
+}
+.cardThree{
+    background-color: #228B22;
+    font-weight: bold;
+    color: #fff;
+}
+.cardFour{
+    background-color: #1E90FF;
+    font-weight: bold;
+    color: #fff;
+}
+.smallOne{
+    font-size: 15px;
+
+}
+.reduceSize{
+    height: 100px;
+    width: 178px;
+}
+
+

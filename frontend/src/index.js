@@ -18,7 +18,7 @@ import UsersPage from './pages/UsersPage';
 import TransactionPage from './pages/TransactionPage';
 import UserPage from './pages/UserPage';
 import IndividualPage from './pages/IndividualPage';
-
+import DashboardPage from './pages/DashboardPage';
 
 //Authorization Control
 import AdminRoute from './components/AdminRoute';
@@ -50,6 +50,7 @@ const routes = createBrowserRouter(
         <Route path='/' element={<AdminRoute/>} >
           <Route path='/users' element={<UsersPage />} />
           <Route path='/user/:id' element={<UserPage />} />
+          <Route path='/dashboard' element={<DashboardPage />} />
 
           </Route>
     </Route>

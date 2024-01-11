@@ -24,7 +24,7 @@ const IndividualPage = () => {
               const {data} = await updateTransactionMutation(id)
               console.log(data)
               toast.success("Transaction with Id " + id + "is now marked as retuned")
-             //window.location.reload()
+             window.location.reload()
         
        } catch (error) {
               console.log(error)

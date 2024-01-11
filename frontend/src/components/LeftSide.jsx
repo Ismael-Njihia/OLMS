@@ -12,6 +12,7 @@ import {useLogoutMutation} from "../slices/usersApiSlice";
 import { logout } from '../slices/authSlice';
 import {toast} from 'react-toastify';
 import { BsPeople } from 'react-icons/bs';
+import { FaChartBar } from 'react-icons/fa';
 
 const LeftSide = () => {
   const {data: genres, isLoading} = useFetchGenresQuery();
@@ -70,6 +71,17 @@ const handleShowModal = () => setShowModal(true);
         </div>
         
        </div>
+       {
+        userInfo && userInfo.user_type === 'admin' && (
+          <div className='bookContainer'>
+            <div className='links'>
+                <Link to='/dashboard' className='homeLink'>
+                    <FaChartBar className='homeIcon'/> Dashboard
+                </Link>
+                </div>
+            </div>
+        )
+       }
        {/**Show transaction button to the User who are admin and staff */}
        {
         userInfo && (userInfo.user_type === 'admin' || userInfo.user_type === 'staff') && (

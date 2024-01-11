@@ -69,7 +69,7 @@ const TransactionPage = () => {
                   </Link>
                 </td>
                 <td>{transaction.status === "borrowed" ?(
-                  <button> Complete</button>
+                 <p style={{color: "red", fontSize: "15px", fontWeight:"bold"}}>{transaction.status}</p>
                 ):(
                   <p style={{color: "green", fontSize: "15px", fontWeight:"bold"}}>{transaction.status}</p>
                 ) }</td>
