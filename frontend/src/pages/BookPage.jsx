@@ -27,8 +27,7 @@ const BookPage = () => {
     const lastFour = decodedId.substr(decodedId.length - 4);
     //get book by id
     const {data: book, isLoading, error} = useGetBookByIdQuery(lastFour);
-    console.log(book);
-    console.log(book?.image_url)
+    
    const userInfo = useSelector((state) => state.auth);
    //get user_type in local storage
     const userType = localStorage.getItem('user_type');

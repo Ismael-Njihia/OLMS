@@ -1,110 +1,161 @@
+// Importing necessary dependencies and components
 import { useParams } from 'react-router-dom'
 import Layout from '../components/Layout'
 import Header from '../components/Header'
-import {useGetTransactionQuery} from "../slices/TransactionApiSlice"
-import {toast } from "react-toastify"
-import {Link} from "react-router-dom"
-import {Row, Col, Image, ListGroup, Card, Button} from 'react-bootstrap'
-
-
+import { useGetTransactionQuery } from "../slices/TransactionApiSlice"
+import { toast } from "react-toastify"
+import { Link } from "react-router-dom"
+import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap'
+import {useUpdateTransactionMutation} from "../slices/TransactionApiSlice"
+// IndividualPage functional component
 const IndividualPage = () => {
+    // Extracting the 'id' parameter from the URL using react-router-dom
     const { id } = useParams()
-    //send id for a response
-    const {data: transactionInfo, error, isLoading} = useGetTransactionQuery(id);
-    console.log(transactionInfo)
+
+
+    // Sending id for a response using the useGetTransactionQuery hook
+    const { data, error, isLoading } = useGetTransactionQuery(id)
+    const [updateTransactionMutation] = useUpdateTransactionMutation()
+
+    // Mutation hook to update the transaction
+   
+    const handleReturnBook = async () => {
+       try {
+              const {data} = await updateTransactionMutation(id)
+              console.log(data)
+              toast.success("Transaction with Id " + id + "is now marked as retuned")
+             //window.location.reload()
+        
+       } catch (error) {
+              console.log(error)
+              toast.error("Something went wrong")
+       }
+    }
+    // Rendering JSX elements
     return (
-    <>
-        <Header />
-        <Layout>
-           <Link className='btn btn-light my-3' to="/transactions">
-            Go Back
-           </Link>
-            {isLoading && <h2>Loading...</h2>}
-            <Row>
-              <h1 style={{ marginLeft:"10px", textAlign:"center",marginRight:"10px"}}>Transaction Receipt</h1>
-              <Col md={4}>
-                <div className='transaction Info'>
-                  <ListGroup variant='flush'>
-                   <ListGroup.Item>
-                    <h6>ID: {transactionInfo?.transation_id}</h6>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <h6>Borrowed On: {new Date(Number(transactionInfo?.borrow_date)).toLocaleDateString()}</h6>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <h6>Expected Return Date: {new Date(Number(transactionInfo?.expected_return_date)).toLocaleDateString()}</h6>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <h6>Cost: {transactionInfo.cost} </h6>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <h6>Fine: {transactionInfo.fine} </h6>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <h6>Status: {transactionInfo.status} </h6>
-                    </ListGroup.Item>
-                  </ListGroup>
-                </div>
-                </Col>
+        <>
+       
+            {/* Header component */}
+            <Header />
+            {/* Layout component */}
+            <Layout>
+                {/* Link to navigate back to the transactions page */}
+                <Link className='btn btn-light my-3' to="/transactions">
+                    Go Back
+                </Link>
+                {/* Check if the data is loading */}
+                {isLoading && <p>Loading...</p>}
+                {/* Give a heading with the transaction Id*/}
+                <h6 style={{textAlign: "center", color:"blue", marginBottom:"10px"}}>Transaction Id: {id}</h6>
+                {/* Check if the data is loading */}
+                <Row>
+                    <Col md={4}>
+                        <div className='transaction-info'>
+                            <ListGroup variant='flush'>
+                                <ListGroup.Item>
+                                    <h6>Borrowed On: {new Date(Number(data?.borrow_date)).toLocaleDateString()}</h6>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                   <h6>Expected Return Date: {new Date(Number(data?.expected_return_date)).toLocaleDateString()}</h6>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                  <h6>Cost: {data?.cost} KES </h6>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    <h6>Fine: {data?.fine} KES</h6>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    <h6>Status: {data?.status}</h6>
+                                </ListGroup.Item>
+                             </ListGroup>
+                        </div>
+                    </Col>
 
-                {/**User Info in a Col */}
-                <Col md={4}>
-                  <div className='userInfo'>
-                    <ListGroup variant='flush'>
-                    <ListGroup.Item>
-                        <h6>User Id: {transactionInfo.user.user_id}</h6>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                      <h6>Borrorwer's Name:  {transactionInfo.user.first_name + " " + transactionInfo.user.last_name}</h6>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                      <h6>Email:  {transactionInfo.user.email}</h6>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        <h6>Username: {transactionInfo.user.username}</h6>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        <h6>Registration Date: {new Date(Number(transactionInfo.user.registration_date)).toLocaleDateString()}</h6>
-                      </ListGroup.Item>
-                    </ListGroup>
-                  </div>
-                </Col>
 
-                {/**Book Info in a Col */}
-                <Col md={4}>
-                  <div className='bookInfo'>
-                    <ListGroup variant='flush'>
-                    <ListGroup.Item>
-                        <h6>Book Id: {transactionInfo.book.book_id}</h6>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        <h6>Title: {transactionInfo.book.title}</h6>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        <h6>Author: {transactionInfo.book.author}</h6>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        <h6>ISBN: {transactionInfo.book.isbn}</h6>
-                      </ListGroup.Item>
-                      <ListGroup.Item>
-                        <h6>Year of Publishing: {transactionInfo.book.published_date}</h6>
-                      </ListGroup.Item>
-                    </ListGroup>
-                  </div>
-                </Col>
-            </Row>
+                    {/**user Info */}
+                    <Col md={4}>
+                        <div className='userInfo'>
+                            <ListGroup variant='flush'>
+                                <ListGroup.Item>
+                                    <h6>User Id: {data?.user?.user_id}</h6>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    <h6>Borrower's Name: {data?.user?.first_name +" " + data?.user?.last_name}</h6>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    <h6>Email: {data?.user?.email}</h6>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    <h6>Username: {data?.user?.username}</h6>
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    <h6>Registration Date: {new Date(Number(data?.user?.registration_date)).toLocaleDateString()}</h6>
+                                </ListGroup.Item>
+                            </ListGroup>
+                        </div>
+                    </Col>
 
-            {/**Show Button when TransactionInfo.status === "borrowed" */}
-            {transactionInfo.status === "borrowed" ?(
-              <Button style={{marginTop: "25px"}} variant="primary" size="md" block>
-                Complete Transaction
-              </Button>
-            ):(
-              <p></p>
-            )}
-        </Layout>
-    </>
-  )
+
+                 <Col md={4}>
+                    <div className='bookInfo'>
+                        <ListGroup variant='flush'>
+                            <ListGroup.Item>
+                                <h6>Book Id: {data?.book?.book_id}</h6>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <h6>Title: {data?.book?.title}</h6>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <h6>Author: {data?.book?.author}</h6>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <h6>ISBN: {data?.book?.isbn}</h6>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <h6>Year of Publishing: {data?.book?.published_date}</h6>
+                            </ListGroup.Item>
+                        </ListGroup>
+                    </div>
+                 </Col>
+                </Row>
+
+                {/* check if book is borrowed and then show a button to return the book */}
+
+                {data?.status === "borrowed" && (
+                    <Button style={{marginTop: '20px'}}
+                        type='button'
+                        className='btn btn-block'
+                        disabled={data?.status === "returned"}
+                        onClick={handleReturnBook}
+                    >
+                        Return Book
+                    </Button>
+                )}
+                {/* check if book is returned and then show a button to delete the transaction */}
+                {data?.status === "returned" && (
+                    <Button style={{marginTop: '20px'}}
+                        type='button'
+                        className='btn btn-block'
+                        disabled={data?.status === "returned"}
+                    >
+                        Delete Transaction
+                    </Button>
+                )}
+               
+               {/*show a print receipt button*/}
+               <Button
+               style={{marginLeft: '20px', marginTop: '20px'}}
+               type='button'
+               className='btn btn-block'
+               disabled={data?.status === "returned"}	
+               >
+                Print Receipt
+
+               </Button>
+            </Layout>
+        </>
+    )
 }
 
+// Exporting the IndividualPage component
 export default IndividualPage

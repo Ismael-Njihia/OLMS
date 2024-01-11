@@ -7,7 +7,7 @@ router.get('/', authenticateToken,getAllTransactions);
 router.post('/register', authenticateToken,registerTransaction);
 router.put('/:id', authenticateToken, transactionReturned);
 router.get('/:id', authenticateToken, getTransaction);
-router
+
 
 
 export default router;

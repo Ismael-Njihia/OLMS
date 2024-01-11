@@ -161,8 +161,8 @@ const transactionReturned = asyncHandler(async(req,res)=>{
         },
         data:{
             status: "returned",
-            return_date: new Date()
-            //return_date: todaysDate().toString(),
+            //return_date: new Date()
+            return_date: todaysDate().toString(),
         },
     });
 
@@ -189,6 +189,9 @@ const transactionReturned = asyncHandler(async(req,res)=>{
     });
 
 });
+
+
+
 //get a transaction
 //GET /api/transactions/:id
 //private
