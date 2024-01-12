@@ -24,6 +24,20 @@ model book {
   transaction      transaction[]
 }
 
+model genre {
+  genre_id   String    @id
+  genre_name String?
+  added_on   DateTime? @db.Date
+  user_id    String?
+  book       book[]
+}
+
+model setting {
+  price     Float
+  updatedBy String?
+  id        String  @id
+}
+
 model transaction {
   transation_id        String  @id
   borrower_id          String?
@@ -50,12 +64,4 @@ model user {
   registration_date String?
   book              book[]
   transaction       transaction[]
-}
-
-model genre {
-  genre_id   String    @id
-  genre_name String?
-  added_on   DateTime? @db.Date
-  user_id    String?
-  book       book[]
 }

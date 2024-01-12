@@ -1,11 +1,16 @@
+import { useState } from "react";
 import Header from "../components/Header"
 import Layout from "../components/Layout"
 import '../assets/Dashboard.css'
 import {useFetchBooksQuery} from '../slices/BooksApiSlice';
 import {useGetTransactionsQuery} from "../slices/TransactionApiSlice"
-import { Card, Row, Col} from "react-bootstrap";
+import { useGetSettingsQuery, useUpdateASettingMutation } from "../slices/setingsApiSlice";
+
+import { Card, Row, Col, Button, Modal,Form} from "react-bootstrap";
 import {useFetchGenresQuery} from '../slices/GenreApiSlice';
 import { useGetUsersQuery } from '../slices/usersApiSlice'
+import { FaCog } from "react-icons/fa";
+import {toast} from 'react-toastify';
 
 
 const DashboardPage = () => {
@@ -14,7 +19,12 @@ const DashboardPage = () => {
     const {data: books, isLoading: isLoadingBooks} = useFetchBooksQuery();
     const {data: genres, isLoading: isLoadingGenres} = useFetchGenresQuery();
     const {data: users, isLoading: isLoadingUsers} = useGetUsersQuery();
+    const [updateSetting, { isLoading: isLoadingUpdateSetting }] = useUpdateASettingMutation();
+    const { data: settings, isLoading: isLoadingSettings } = useGetSettingsQuery();
 
+    const priceSetting = settings?.[0].price || 0;
+    const [price, setPrice] = useState(priceSetting);
+    
     //count transactions, books, genres, users
     //store them in variables
     const totalTransactions = transactions?.length || 0;
@@ -60,13 +70,51 @@ const DashboardPage = () => {
         (total, transaction) => total + transaction.fine,
         0
     )
+
+    //modal Here
+    const [showModal, setShowModal] = useState(false);
+    const handleCloseModal = () => setShowModal(false)
+    const handleShowModal = () => setShowModal(true);
+    //convert price to number
+    const priceNumber = Number(price);
+    if(isNaN(priceNumber)){
+        alert("Price must be a number");
+    }
+
+
+    //handle submit price
+    const handleSubmitPrice = async () =>{
+        try{
+            const resultAction = await updateSetting({
+                id: settings?.[0].id,
+                price: priceNumber,
+            });
+            console.log(resultAction);
+            toast.success(resultAction.data.message)
+            handleCloseModal();
+        }catch(error){
+            console.log(error);
+            toast.error(error.message || "An error occured")
+        }
+
+    }
+
   return (
     <>
     <Header />
+    {isLoading || isLoadingBooks || isLoadingGenres || isLoadingUsers || isLoadingSettings ? (
+        <div className="loader">Loading...</div>
+    ) : null
+    }
 
     <Layout>
+    
         <div className="dashboard_container">
-            <Row>
+            <Button style={{border: "2px solid #333"}} variant="light" onClick={handleShowModal} className="settings-button">
+            <FaCog /> Setting
+        </Button>
+        <hr style={{ borderTop: '2px solid #333' }} />
+            <Row style={{marginTop: "20px"}}>
                 <Col>
                     <Card className="cardOne">
                         <Card.Body>
@@ -170,6 +218,50 @@ const DashboardPage = () => {
             <hr style={{ borderTop: '2px solid #333' }} />
  
         </div>
+
+
+        {/**Modal Here */}
+        <Modal show={showModal} onHide={handleCloseModal}>
+            <Modal.Header closeButton>
+                  <Modal.Title>SET PRICE PER DAY</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+                <Form>
+                    <Form.Group controlId="price">
+                        <Form.Label>
+                            Change Price
+                        </Form.Label>
+                        <Form.Control
+                        type="Number"
+                        placeholder={priceSetting || "Default Placeholder"} 
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        >
+                        </Form.Control>
+
+                    </Form.Group>
+
+                </Form>
+            </Modal.Body>
+            <Modal.Footer>
+                <button
+                className="btn btn-danger"
+                onClick={handleCloseModal}
+                >
+                    Close
+                </button>
+
+                <button
+                className="btn btn-primary"
+                onClick={handleSubmitPrice}
+                >
+                    Set Price
+
+                </button>
+            </Modal.Footer>
+
+        </Modal>
     </Layout>
     </>
   )

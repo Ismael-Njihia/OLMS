@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import uploadRoute from './route/uploadRoute.js';
+import settingRoute from './route/settingRoute.js';
 
 dotenv.config();
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api/books', bookRoute);
 app.use('/api/transactions', transactionRoute);
 app.use('/api/genres', genreRoute);
 app.use('/api/upload', uploadRoute);
+app.use('/api/settings', settingRoute);
 
 const __dirname = path.resolve();
 
