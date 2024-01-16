@@ -14,8 +14,7 @@ import {toast} from 'react-toastify';
 
 
 const DashboardPage = () => {
-    const { data: transactions, error, isLoading } = useGetTransactionsQuery()
-    console.log(transactions)
+    const { data: transactions, error, isLoading } = useGetTransactionsQuery();
     const {data: books, isLoading: isLoadingBooks} = useFetchBooksQuery();
     const {data: genres, isLoading: isLoadingGenres} = useFetchGenresQuery();
     const {data: users, isLoading: isLoadingUsers} = useGetUsersQuery();
