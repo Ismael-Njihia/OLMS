@@ -23,18 +23,12 @@ const getAllTransactions = async (req, res) => {
 //private
 //used by admin and staff
 const registerTransaction = asyncHandler(async (req, res) => {
-    const {borrower_id, book_id, cost} = req.body;
+    const {borrower_id, book_id, cost, borrow_date, expected_return_date} = req.body;
     const staff_id = req.user.user_id;
-    const borrow_date = todaysDate().toString();
-    //example of borrow_date is "borrow_date": "1703075955975",
-    //example of expected_return_date is "expected_return_date": "1705687755975",
-    //add 7 days to the borrow_date for expected_return_date
-
-    const expected_return_date = (todaysDate() + 604800000).toString();
     const return_date = null;
     const status = "borrowed";
     const fine = 0.0;
-    console.log(borrow_date);
+   
     if(!borrower_id){
         res.status(400);
         throw new Error("The borrower needs to be specified");
@@ -86,8 +80,8 @@ const registerTransaction = asyncHandler(async (req, res) => {
             transation_id: transaction_id,
             borrower_id,
             book_id,
-            borrow_date,
-            expected_return_date,
+            borrow_date: borrow_date.toString(),
+            expected_return_date: expected_return_date.toString(),
             return_date,
             cost,
             status,

@@ -52,11 +52,12 @@ const TransactionPage = () => {
              >
                 <td>{transaction.transation_id}</td>
                 <td>{transaction.book_id}</td>
-                <td>{new Date(Number(transaction.borrow_date)).toLocaleString()}</td>
+                <td>{new Date(Number(transaction.borrow_date) * 1000).toLocaleString()}</td>
+
                 <td>{transaction.user.first_name + " " + transaction.user.last_name}</td>
                 <td>{transaction.cost} </td>
                 <td>{transaction.fine} </td>
-                <td>{new Date(Number(transaction.expected_return_date)).toLocaleString()}</td>
+                <td>{new Date(Number(transaction.expected_return_date) * 1000).toLocaleString()}</td>
 
                 <td>{
                   transaction.status === "borrowed" ?(

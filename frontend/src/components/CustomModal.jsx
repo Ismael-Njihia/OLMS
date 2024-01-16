@@ -6,6 +6,10 @@ import '../assets/Modal.css';
 import {useCreateTransactionMutation} from '../slices/TransactionApiSlice'
 import { toast } from 'react-toastify';
 
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import {useGetSettingsQuery} from '../slices/setingsApiSlice';
+
 const CustomModal = ({ show, handleClose }) => {
   const { id } = useParams();
   const { data: users, isLoading } = useGetUsersQuery();
@@ -14,7 +18,10 @@ const CustomModal = ({ show, handleClose }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [borrower_id, setBorrower_id] = useState(null);
 
-  console.log(borrower_id)
+  const [expected_return_date, setExpected_return_date] = useState(null);
+
+  const { data: settings, isLoading: isLoadingSettings } = useGetSettingsQuery();
+  const price = settings?.[0].price;
 
   const [createTransaction, {isLoading: isCreating}] = useCreateTransactionMutation()
 
@@ -44,13 +51,34 @@ const CustomModal = ({ show, handleClose }) => {
     setBorrower_id(user.user_id);
     setSearchResults([]); 
   };
+
+  const handleDateChange = (date) => {
+    const formattedDateInSec = Math.floor(date.getTime()/1000);
+    setExpected_return_date(formattedDateInSec);
+     console.log(formattedDateInSec);
+  }
+
+  //set borrow date
+  const borrowDate = new Date();
+  const formattedBorrowDateInSec = Math.floor(borrowDate.getTime()/1000);
+  console.log(formattedBorrowDateInSec);
+
+  //calculate days between borrow date and expected return date
+  const days = (expected_return_date - formattedBorrowDateInSec)/(60*60*24);
+  //round of days to nearest whole number
+  const roundedDays = Math.round(days);
+
+  const cost = price * roundedDays;
+
   //create transaction
   const handleTransaction = async (e)=>{
     e.preventDefault();
     const transactionDetails ={
         book_id: id,
         borrower_id: borrower_id,
-        cost: 100
+        cost: cost,
+        borrow_date: formattedBorrowDateInSec,
+        expected_return_date: expected_return_date
     }
     try {
         const res = await createTransaction(transactionDetails).unwrap();
@@ -70,6 +98,7 @@ const CustomModal = ({ show, handleClose }) => {
     }
 
   }
+  
 
   return (
     <div className="modalContainer">
@@ -94,6 +123,56 @@ const CustomModal = ({ show, handleClose }) => {
               </li>
             ))}
           </ul>
+          <br></br>
+          {
+            selectedUser &&(
+              <div className='borrowDate'>
+              <Form.Group controlId='borrowDate'>
+                <Form.Label>Borrow Date</Form.Label>
+                <DatePicker
+                selected={new Date()}
+                disabled
+                dateFormat='dd/MM/yyyy HH:mm:ss'
+                className='form-control'>
+
+                </DatePicker>
+                </Form.Group>
+              </div>
+            )
+          }
+          <br>
+          </br>
+          {selectedUser && (
+            <div className='selectReturnDate'>
+              <Form.Group controlId='returnDate'>
+                <Form.Label>Return Date</Form.Label>
+                <DatePicker
+                //if expeccted date is not set, set it to current date
+                selected={expected_return_date ? new Date(expected_return_date * 1000) : new Date()}
+                  onChange={(date) => handleDateChange(date)}
+                  minDate={new Date()}
+                  dateFormat='dd/MM/yyyy'
+                  className='form-control'
+                />
+                </Form.Group>
+              </div>
+          )}
+          <br></br>
+          {
+            selectedUser && expected_return_date !== null && expected_return_date !== undefined &&(
+              <div className='cost'>
+              <Form.Group controlId='cost'>
+                <Form.Label>Cost</Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder={`KSH ${price} per day`}
+                  value={`KSH ${cost}`}
+                  disabled
+                />
+              </Form.Group>
+              </div>
+            )
+          }
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

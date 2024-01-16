@@ -22,7 +22,7 @@ const DashboardPage = () => {
     const [updateSetting, { isLoading: isLoadingUpdateSetting }] = useUpdateASettingMutation();
     const { data: settings, isLoading: isLoadingSettings } = useGetSettingsQuery();
 
-    const priceSetting = settings?.[0].price || 0;
+    const priceSetting = settings?.[0].price;
     const [price, setPrice] = useState(priceSetting);
     
     //count transactions, books, genres, users
@@ -77,10 +77,6 @@ const DashboardPage = () => {
     const handleShowModal = () => setShowModal(true);
     //convert price to number
     const priceNumber = Number(price);
-    if(isNaN(priceNumber)){
-        alert("Price must be a number");
-    }
-
 
     //handle submit price
     const handleSubmitPrice = async () =>{
@@ -92,6 +88,10 @@ const DashboardPage = () => {
             console.log(resultAction);
             toast.success(resultAction.data.message)
             handleCloseModal();
+            setPrice("");
+
+            window.location.reload();
+
         }catch(error){
             console.log(error);
             toast.error(error.message || "An error occured")
