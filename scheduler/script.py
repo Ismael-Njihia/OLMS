@@ -17,14 +17,14 @@ def calculate_fine(expected_return_date):
     print("Current date and time: ", current_date_time)
     difference = current_date_time - expected_return_date
     if difference > 0:
-         print(difference)
+         print(difference, " seconds")
        #calculate the days from the difference
          days = difference / 86400
             #calculate the fine
          print(days, " days")
          fine = days * 30
-         #round the fine to 2 decimal places
-         fine = round(fine, 2)
+         #round the fine to whole number
+         fine = round(fine)
          print("Fine: ", fine)
          return fine
     else:
@@ -52,7 +52,12 @@ def main():
         current_date_time = int(current_date_time.timestamp())
         cursor.execute(query, (current_date_time,))
         records = cursor.fetchall()
-        print("Records: ", records)
+        #have only the records whose status is 'borrowed'
+        records = [record for record in records if record[2] == 'borrowed']
+        with open("records.txt","w") as file:
+            file.write(f"Current run time: {datetime.now()}\n")
+
+
         for record in records:
             print("Record: ", record)
             update_fine(cursor,record)

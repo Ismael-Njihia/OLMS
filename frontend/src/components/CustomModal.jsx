@@ -148,10 +148,10 @@ const CustomModal = ({ show, handleClose }) => {
                 <Form.Label>Return Date</Form.Label>
                 <DatePicker
                 //if expeccted date is not set, set it to current date
-                selected={expected_return_date ? new Date(expected_return_date * 1000) : new Date()}
+                selected={expected_return_date ? new Date(expected_return_date * 1000) : new Date(new Date().getTime() + 24 * 60 * 60 * 1000)}
                   onChange={(date) => handleDateChange(date)}
-                  minDate={new Date()}
-                  dateFormat='dd/MM/yyyy'
+                  minDate={new Date(new Date().getTime() + 24 * 60 * 60 * 1000)}
+                  dateFormat='dd/MM/yyyy HH:mm:ss'
                   className='form-control'
                 />
                 </Form.Group>
