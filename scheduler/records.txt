@@ -1,1 +1,3 @@
-Current run time: 2024-01-17 09:06:24.104692
+Current run time: 2024-01-17 11:48:17.233498
+Number of records: 1
+('1705476838', '1705468416', 'borrowed')

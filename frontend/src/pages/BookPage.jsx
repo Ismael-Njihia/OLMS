@@ -8,11 +8,14 @@ import {Row, Col, Image, ListGroup, Card, Button} from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import CustomModal from '../components/CustomModal';
 import { useState } from 'react';
+import { addToBasket } from '../slices/basketSlice';
+import { useDispatch } from 'react-redux';
 
 
 const BookPage = () => {
 
   const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
 
   const handleShowModal = () => {
     setShowModal(true);
@@ -27,6 +30,11 @@ const BookPage = () => {
     const lastFour = decodedId.substr(decodedId.length - 4);
     //get book by id
     const {data: book, isLoading, error} = useGetBookByIdQuery(lastFour);
+
+    //add to Cart
+    const addToCartHandler = () => {
+      dispatch(addToBasket(book))
+    }
     
    const userInfo = useSelector((state) => state.auth);
    //get user_type in local storage
@@ -149,6 +157,7 @@ const BookPage = () => {
                 className='btn-varient-info btn-block'
                 type='button'
                 disabled={book?.available_copies === 0}
+                onClick={addToCartHandler}
                 
                 >
                   Add to Basket

@@ -56,8 +56,10 @@ def main():
         records = [record for record in records if record[2] == 'borrowed']
         with open("records.txt","w") as file:
             file.write(f"Current run time: {datetime.now()}\n")
-
-
+            file.write(f"Number of records: {len(records)}\n")
+            #write the records to the file
+            for record in records:
+                file.write(f"{record}\n")
         for record in records:
             print("Record: ", record)
             update_fine(cursor,record)

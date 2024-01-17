@@ -19,6 +19,7 @@ import TransactionPage from './pages/TransactionPage';
 import UserPage from './pages/UserPage';
 import IndividualPage from './pages/IndividualPage';
 import DashboardPage from './pages/DashboardPage';
+import CartPage from './pages/CartPage';
 
 //Authorization Control
 import AdminRoute from './components/AdminRoute';
@@ -51,6 +52,7 @@ const routes = createBrowserRouter(
           <Route path='/users' element={<UsersPage />} />
           <Route path='/user/:id' element={<UserPage />} />
           <Route path='/dashboard' element={<DashboardPage />} />
+          <Route path='/cart' element={<CartPage />} />
 
           </Route>
     </Route>
