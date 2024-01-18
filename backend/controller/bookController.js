@@ -9,6 +9,21 @@ const getAllBooks = async (req, res) => {
     res.json(books);
 };
 
+//get many books by IDs
+//POST /api/books/getMany
+//private
+const getManyBooks = asyncHandler(async (req, res) => {
+    const { book_ids } = req.body;
+    const books = await prisma.book.findMany({
+        where: {
+            book_id: {
+                in: book_ids
+            }
+        }
+    });
+    res.json(books);
+});
+
 //creating a book
 //POST /api/books/register
 //private
@@ -152,4 +167,4 @@ const getBookById = asyncHandler(async (req, res) => {
 
 
 
-export {getAllBooks, registerBook, getBookById}
+export {getAllBooks, registerBook, getBookById, getManyBooks}

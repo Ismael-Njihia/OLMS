@@ -8,20 +8,19 @@ datasource db {
 }
 
 model book {
-  book_id          String        @id
+  book_id          String  @id
   title            String?
   author           String?
   isbn             String?
-  published_date   String?       @db.VarChar(20)
+  published_date   String? @db.VarChar(20)
   available_copies Int?
   total_copies     Int?
   image_url        String?
-  description_     String?       @map("description ")
+  description_     String? @map("description ")
   user_id          String?
   genre_id         String?
-  genre            genre?        @relation(fields: [genre_id], references: [genre_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_genre")
-  user             user?         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_poster")
-  transaction      transaction[]
+  genre            genre?  @relation(fields: [genre_id], references: [genre_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_genre")
+  user             user?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_poster")
 }
 
 model genre {
@@ -39,9 +38,8 @@ model setting {
 }
 
 model transaction {
-  transation_id        String  @id
+  transation_id        String   @id
   borrower_id          String?
-  book_id              String?
   cost                 Float?
   status               String
   fine                 Float?
@@ -49,8 +47,8 @@ model transaction {
   borrow_date          String?
   expected_return_date String?
   return_date          String?
-  book                 book?   @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book")
-  user                 user?   @relation(fields: [borrower_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
+  book_id              String[]
+  user                 user?    @relation(fields: [borrower_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user")
 }
 
 model user {

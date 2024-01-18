@@ -11,6 +11,14 @@ export const bookApiSlice = apiSlice.injectEndpoints({
             query: (id) => `${BOOK_URL}/${id}`,
             providesTags: ["Book"],
         }),
+        getManyBooks: builder.mutation({
+            query: (ids) => ({
+                url: `${BOOK_URL}/getMany`,
+                method: "POST",
+                body: ids,
+            }),
+            providesTags: ["Books"],
+        }),
         addBook: builder.mutation({
             query: (body) => ({
                 url: `${BOOK_URL}/register`,
@@ -32,4 +40,5 @@ export const bookApiSlice = apiSlice.injectEndpoints({
 export const { useFetchBooksQuery,
     useAddBookMutation,
     useUploadImageMutation,
+    useGetManyBooksMutation,
     useGetBookByIdQuery } = bookApiSlice;

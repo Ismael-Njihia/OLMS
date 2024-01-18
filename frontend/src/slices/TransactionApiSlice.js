@@ -23,6 +23,14 @@ export const transactionApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Transactions']
         }),
+        manyTransaction: builder.mutation({
+            query: (transactions) => ({
+                url: `${TRANSACTION_URL}/registerMany`,
+                method: 'POST',
+                body: transactions
+            }),
+            invalidatesTags: ['Transactions']
+        }),
         updateTransaction: builder.mutation({
             query: (id) => ({
                 url: `${TRANSACTION_URL}/${id}`,
@@ -44,6 +52,7 @@ export const {
     useGetTransactionsQuery,
     useGetTransactionQuery,
     useCreateTransactionMutation,
+    useManyTransactionMutation,
     useUpdateTransactionMutation,
     useDeleteTransactionMutation,
 

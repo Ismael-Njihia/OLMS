@@ -8,7 +8,7 @@ const getAllTransactions = async (req, res) => {
     const transactions = await prisma.transaction.findMany({
         include: {
             user: true,
-            book: true,
+           // book: true,
         },
         orderBy: {
             borrow_date: "asc",
@@ -24,6 +24,8 @@ const getAllTransactions = async (req, res) => {
 //used by admin and staff
 const registerTransaction = asyncHandler(async (req, res) => {
     const {borrower_id, book_id, cost, borrow_date, expected_return_date} = req.body;
+    //change book_id to an array
+    const book_ids = [book_id];
     const staff_id = req.user.user_id;
     const return_date = null;
     const status = "borrowed";
@@ -79,7 +81,7 @@ const registerTransaction = asyncHandler(async (req, res) => {
         data: {
             transation_id: transaction_id,
             borrower_id,
-            book_id,
+            book_id: book_ids,
             borrow_date: borrow_date.toString(),
             expected_return_date: expected_return_date.toString(),
             return_date,
@@ -122,6 +124,95 @@ const registerTransaction = asyncHandler(async (req, res) => {
         throw new Error("Invalid transaction data");
     }
 });
+//creating a transaction Many Books
+//POST /api/transactions/registerMany
+//private
+//used by admin and staff
+
+const registerTransactionMany = asyncHandler(async (req, res) => {
+    const { borrower_id, book_ids, cost, borrow_date, expected_return_date } = req.body;
+    console.log(borrower_id + " borrower_id")
+    const staff_id = req.user.user_id;
+    const return_date = null;
+    const status = "borrowed";
+    const fine = 0.0;
+  
+    // Check if there are enough copies for all books
+    for (const book_id of book_ids) {
+      const bookExists = await prisma.book.findUnique({
+        where: {
+          book_id: book_id
+        }
+      });
+  
+      if (!bookExists || bookExists.available_copies <= 0) {
+        res.status(400);
+        throw new Error(`There are no available copies of the book with ID: ${book_id}`);
+      }
+    }
+  
+    // Generate a single transaction ID for all books
+    const transactionIdINT = generateSecondSinceEpoch() + generateRandom();
+    const transaction_id = transactionIdINT.toString();
+  
+    // Create a single transaction for all books
+    const transaction = await prisma.transaction.create({
+      data: {
+        transation_id: transaction_id,
+        borrower_id,
+        book_id: book_ids, // Assuming book_ids is an array of book IDs
+        borrow_date: borrow_date.toString(),
+        expected_return_date: expected_return_date.toString(),
+        return_date,
+        cost,
+        status,
+        fine,
+        staff_id,
+      }
+    });
+  
+    // Update the available copies for all books
+    const updateBooksPromises = book_ids.map(async (book_id) => {
+      const updatedBook = await prisma.book.update({
+        where: {
+          book_id: book_id
+        },
+        data: {
+          available_copies: {
+            decrement: 1
+          }
+        }
+      });
+  
+      if (!updatedBook) {
+        res.status(400);
+        throw new Error(`Failed to update book with ID: ${book_id}`);
+      }
+    });
+  
+    // Wait for all book updates to complete
+    await Promise.all(updateBooksPromises);
+  
+    if (transaction) {
+      res.status(201).json({
+        transaction_id,
+        borrower_id,
+        book_ids,
+        borrow_date,
+        expected_return_date,
+        return_date,
+        cost,
+        status,
+        fine,
+        staff_id
+      });
+    } else {
+      res.status(400);
+      throw new Error("Invalid transaction data");
+    }
+  });
+  
+
 //update a transaction
 //PUT /api/transactions/:id
 //private
@@ -184,8 +275,6 @@ const transactionReturned = asyncHandler(async(req,res)=>{
 
 });
 
-
-
 //get a transaction
 //GET /api/transactions/:id
 //private
@@ -198,7 +287,7 @@ const getTransaction = asyncHandler(async(req,res)=>{
         },
         include:{
             user: true,
-            book: true,
+            //book: true,
         },
     });
     if(!transaction){
@@ -214,4 +303,4 @@ const getTransaction = asyncHandler(async(req,res)=>{
 
 
 
-export {getAllTransactions,getTransaction, registerTransaction, transactionReturned}
+export {getAllTransactions,getTransaction, registerTransaction, transactionReturned, registerTransactionMany}

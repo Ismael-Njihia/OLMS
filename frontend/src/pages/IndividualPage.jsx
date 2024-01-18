@@ -1,4 +1,5 @@
 // Importing necessary dependencies and components
+import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import Layout from '../components/Layout'
 import Header from '../components/Header'
@@ -8,6 +9,8 @@ import { Link } from "react-router-dom"
 import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap'
 import {useUpdateTransactionMutation} from "../slices/TransactionApiSlice"
 // IndividualPage functional component
+import {useGetManyBooksMutation} from "../slices/BooksApiSlice"
+
 const IndividualPage = () => {
     // Extracting the 'id' parameter from the URL using react-router-dom
     const { id } = useParams()
@@ -16,9 +19,24 @@ const IndividualPage = () => {
     // Sending id for a response using the useGetTransactionQuery hook
     const { data, error, isLoading } = useGetTransactionQuery(id)
     const [updateTransactionMutation] = useUpdateTransactionMutation()
+    
+    const bookIds = data?.book_id
+    const bookIdsArray = useMemo(() => (bookIds ? [bookIds] : []), [bookIds]);
 
+    console.log(bookIdsArray)
+    const [getManyBooks, { data: booksData, error: booksError, isLoading: booksLoading }] = useGetManyBooksMutation();
+
+    useEffect(() => {
+        if (bookIdsArray.length > 0) {
+            getManyBooks({
+                book_ids: bookIdsArray,
+            });
+        }
+    }, [getManyBooks, bookIdsArray]);
+   console.log(booksData)
+
+   console.log(booksError + " error")
     // Mutation hook to update the transaction
-   
     const handleReturnBook = async () => {
        try {
               const {data} = await updateTransactionMutation(id)

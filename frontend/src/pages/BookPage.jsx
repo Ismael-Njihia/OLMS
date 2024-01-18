@@ -11,12 +11,14 @@ import { useState } from 'react';
 
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { addToBasket } from '../slices/cartSlice';
 
 const BookPage = () => {
 
   const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
  
-
   const handleShowModal = () => {
     setShowModal(true);
   }
@@ -32,7 +34,10 @@ const BookPage = () => {
     const {data: book, isLoading, error} = useGetBookByIdQuery(lastFour);
     console.log(book);
 
-    
+    const handleAddToBasket = () => {
+      dispatch(addToBasket(book));
+      navigate('/cart');
+    };
    const userInfo = useSelector((state) => state.auth);
    //get user_type in local storage
     const userType = localStorage.getItem('user_type');
@@ -154,6 +159,7 @@ const BookPage = () => {
                 className='btn-varient-info btn-block'
                 type='button'
                 disabled={book?.available_copies === 0}
+                onClick={handleAddToBasket}
                 >
                   Add to Basket
                 </Button>
