@@ -53,17 +53,17 @@ const CartPage = () => {
                       return(
                       <ListGroup.Item key={book.book_id}>
                         <Row>
-                          <Col md={2}>
+                          <Col md={1}>
                             <Image src={book.image_url} alt={book.title} fluid rounded/>
                           </Col>
-                          <Col md={3}>
+                          <Col md={2}>
                             <Link to={`/book/${encodedId}`}>{book.title}</Link>
                           </Col>
                           <Col md={2}>
-                            Author: {book.author}
+                            {book.author}
                             </Col>
                             <Col md={2}>
-                              Publishing Date: {book.published_date}
+                            {book.published_date}
                               </Col>
                           <Col md={2}>
                             Available Copies: {book.available_copies}

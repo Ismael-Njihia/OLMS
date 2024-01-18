@@ -9,7 +9,7 @@ import { Link } from "react-router-dom"
 import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap'
 import {useUpdateTransactionMutation} from "../slices/TransactionApiSlice"
 // IndividualPage functional component
-import {useGetManyBooksMutation} from "../slices/BooksApiSlice"
+import {useFetchBooksQuery} from "../slices/BooksApiSlice"
 
 const IndividualPage = () => {
     // Extracting the 'id' parameter from the URL using react-router-dom
@@ -19,23 +19,48 @@ const IndividualPage = () => {
     // Sending id for a response using the useGetTransactionQuery hook
     const { data, error, isLoading } = useGetTransactionQuery(id)
     const [updateTransactionMutation] = useUpdateTransactionMutation()
-    
+    const {data: booksData, error: booksError, isLoading: booksLoading} = useFetchBooksQuery()
+    console.log(booksData)
+    //make bookIds an array
+  
     const bookIds = data?.book_id
-    const bookIdsArray = useMemo(() => (bookIds ? [bookIds] : []), [bookIds]);
-
+    //console.log(bookIds)
+    const bookIdsArray = Array.isArray(bookIds) ? bookIds : [bookIds];
     console.log(bookIdsArray)
-    const [getManyBooks, { data: booksData, error: booksError, isLoading: booksLoading }] = useGetManyBooksMutation();
+    //make Ids an array else none
+    const filteredBooksData = booksData?.filter(book => bookIdsArray.includes(book.book_id));
 
-    useEffect(() => {
-        if (bookIdsArray.length > 0) {
-            getManyBooks({
-                book_ids: bookIdsArray,
-            });
-        }
-    }, [getManyBooks, bookIdsArray]);
-   console.log(booksData)
+    //console.log(JSON.stringify(filteredBooksData, null, 2), "filtered");
+    const booksElements = filteredBooksData?.map((book, index)=>(
+        <ListGroup variant='flush'>
+        <ListGroup.Item key={index}>
+            <Row>
+                <Col md={1}>
+                <Image src={book.image_url} alt={book.title} fluid rounded/>
+                </Col>
 
-   console.log(booksError + " error")
+                <Col md={2}>
+                    {book.title}
+                </Col>
+
+                <Col md={2}>
+                     {book.book_id}
+                </Col>
+
+                <Col md={2}>
+                 {book.author}
+                 </Col>
+                 <Col md={2}>
+                              Publishing Date: {book.published_date}
+                </Col>
+
+            </Row>
+        </ListGroup.Item>
+        </ListGroup>
+    ))
+
+
+
     // Mutation hook to update the transaction
     const handleReturnBook = async () => {
        try {
@@ -67,14 +92,14 @@ const IndividualPage = () => {
                 <h6 style={{textAlign: "center", color:"blue", marginBottom:"10px"}}>Transaction Id: {id}</h6>
                 {/* Check if the data is loading */}
                 <Row>
-                    <Col md={4}>
+                    <Col md={6}>
                         <div className='transaction-info'>
                             <ListGroup variant='flush'>
                                 <ListGroup.Item>
-                                    <h6>Borrowed On: {new Date(Number(data?.borrow_date)).toLocaleDateString()}</h6>
+                                    <h6>Borrowed On: {new Date(Number(data?.borrow_date) * 1000).toLocaleString()}</h6>
                                 </ListGroup.Item>
                                 <ListGroup.Item>
-                                   <h6>Expected Return Date: {new Date(Number(data?.expected_return_date)).toLocaleDateString()}</h6>
+                                   <h6>Expected Return Date: {new Date(Number(data?.expected_return_date) * 1000).toLocaleString()}</h6>
                                 </ListGroup.Item>
                                 <ListGroup.Item>
                                   <h6>Cost: {data?.cost} KES </h6>
@@ -91,7 +116,7 @@ const IndividualPage = () => {
 
 
                     {/**user Info */}
-                    <Col md={4}>
+                    <Col md={6}>
                         <div className='userInfo'>
                             <ListGroup variant='flush'>
                                 <ListGroup.Item>
@@ -114,28 +139,11 @@ const IndividualPage = () => {
                     </Col>
 
 
-                 <Col md={4}>
-                    <div className='bookInfo'>
-                        <ListGroup variant='flush'>
-                            <ListGroup.Item>
-                                <h6>Book Id: {data?.book?.book_id}</h6>
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                <h6>Title: {data?.book?.title}</h6>
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                <h6>Author: {data?.book?.author}</h6>
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                <h6>ISBN: {data?.book?.isbn}</h6>
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                <h6>Year of Publishing: {data?.book?.published_date}</h6>
-                            </ListGroup.Item>
-                        </ListGroup>
-                    </div>
-                 </Col>
+                
                 </Row>
+                <div style={{marginTop: "20px"}}>
+                    {booksElements}
+                </div>
 
                 {/* check if book is borrowed and then show a button to return the book */}
 
@@ -146,8 +154,8 @@ const IndividualPage = () => {
                         disabled={data?.status === "returned"}
                         onClick={handleReturnBook}
                     >
-                        Return Book
-                    </Button>
+                        Complete Transaction
+                   </Button>
                 )}
                 {/* check if book is returned and then show a button to delete the transaction */}
                 {data?.status === "returned" && (

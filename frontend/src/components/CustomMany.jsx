@@ -74,7 +74,13 @@ const CustomMany = ({ show, handleClose }) => {
   //round of days to nearest whole number
   const roundedDays = Math.round(days);
 
-  const cost = price * roundedDays;
+  const cost = count * (price * roundedDays);
+
+  if(count>1){
+    const discountPer = 10;
+    const discount = (discountPer/100) * cost;
+    const discountCost = cost - discount;
+  }
 
   //create transaction
   const handleTransaction = async (e)=>{
