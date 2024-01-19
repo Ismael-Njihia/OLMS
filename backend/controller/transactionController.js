@@ -3,7 +3,8 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import generateRandom from "../util/generateRandom.js";
 import generateSecondSinceEpoch from "../util/generateSecSinceEpoch.js";
 import todaysDate from "../util/todaysDate.js";
-
+import sendTransactionEmail from "../util/emailTransCreated.js";
+import sendReturnEmail from "../util/emailReturned.js";
 const getAllTransactions = async (req, res) => {
     const transactions = await prisma.transaction.findMany({
         include: {
@@ -105,6 +106,18 @@ const registerTransaction = asyncHandler(async (req, res) => {
             res.status(400);
             throw new Error("The book could not be updated");
         }
+        //send email to the borrower
+        const email = borrowerExists.email;
+        console.log(email + " email To send to");
+        const first_Name = borrowerExists.first_name;
+        const last_Name = borrowerExists.last_name;
+        const transation_id = transaction_id;
+        //change the borrow date from epoch to date by multiplying by 1000
+        const borrow_date_date = new Date(borrow_date * 1000);
+        const expected_return_date_date = new Date(expected_return_date * 1000);
+        const totalCost = cost;
+        sendTransactionEmail(email, first_Name, last_Name, transation_id, borrow_date_date, expected_return_date_date, totalCost);
+
         res.status(201).json({
             transaction_id,
             borrower_id,
@@ -118,6 +131,7 @@ const registerTransaction = asyncHandler(async (req, res) => {
             staff_id,
             book
         }).message(transaction_id)
+        
     }
     else{
         res.status(400);
@@ -149,6 +163,16 @@ const registerTransactionMany = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error(`There are no available copies of the book with ID: ${book_id}`);
       }
+    }
+
+     //make sure the borrower exists
+     const borrowerExists = await prisma.user.findUnique({
+        where: {
+            user_id: borrower_id
+        }})
+    if(!borrowerExists){
+        res.status(400);
+        throw new Error("No Such borrower does not exist");
     }
   
     // Generate a single transaction ID for all books
@@ -194,6 +218,19 @@ const registerTransactionMany = asyncHandler(async (req, res) => {
     await Promise.all(updateBooksPromises);
   
     if (transaction) {
+
+     //send email to the borrower
+     const email = borrowerExists.email;
+     console.log(email + " email To send to");
+     const first_Name = borrowerExists.first_name;
+     const last_Name = borrowerExists.last_name;
+     const transation_id = transaction_id;
+     //change the borrow date from epoch to date by multiplying by 1000
+     const borrow_date_date = new Date(borrow_date * 1000);
+     const expected_return_date_date = new Date(expected_return_date * 1000);
+     const totalCost = cost;
+     sendTransactionEmail(email, first_Name, last_Name, transation_id, borrow_date_date, expected_return_date_date, totalCost);
+
       res.status(201).json({
         transaction_id,
         borrower_id,
@@ -251,10 +288,15 @@ const transactionReturned = asyncHandler(async(req,res)=>{
         },
     });
 
+    console.log("Books to be updated: " + updatedTransaction.book_id)
+    const updateBooksPromises = updatedTransaction.book_id.map(async (book_id) => {
     //update the available copies of the book
     const updatedBook = await prisma.book.update({
+        //get book ids from the transaction
+        //they are in array form
+
         where:{
-            book_id: updatedTransaction.book_id,
+            book_id: book_id,
         },
         data:{
             available_copies:{
@@ -264,14 +306,41 @@ const transactionReturned = asyncHandler(async(req,res)=>{
     });
     if(!updatedBook){
         res.status(400);
-        throw new Error(" Failed to update boo Info")
+        throw new Error(`Failed to update book Info with id: {book_id}`)
     }
+});
+//wait for all book updates to complete
+await Promise.all(updateBooksPromises);
+
+//get the borrower Info from the updated transaction
+const borrower = await prisma.user.findUnique({
+    where:{
+        user_id: updatedTransaction.borrower_id,
+    },
+});
+if(!borrower){
+    res.status(400);
+    throw new Error(`Failed to get borrower Info with id: {updatedTransaction.borrower_id}`)
+}
+//send email to the borrower
+const email = borrower.email;
+console.log(email + " email To send to");
+const first_Name = borrower.first_name;
+const last_Name = borrower.last_name;
+const transation_id = updatedTransaction.transation_id;
+let today= new Date();
+//make return_date_date more readable
+const return_date_date = today.toDateString();
+
+
+sendReturnEmail(email, first_Name, last_Name, transation_id,return_date_date);
 
     res.status(200).json({
         message: "Book Successfully returned and Received",
         transaction: updateTransaction,
-        updatedBook
+        
     });
+
 
 });
 

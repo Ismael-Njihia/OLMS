@@ -18,6 +18,13 @@ const LoginPage = () => {
     const [login, {isLoading}] = useLoginMutation();
     const {userInfo } = useSelector(state => state.auth);
 
+    const location = useLocation();
+    const redirect = location.search ? location.search.split('=')[1] : '/';
+    useEffect(()=>{
+        if(userInfo){
+            navigate(redirect);
+        }
+    },[navigate, userInfo, redirect])
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
     }

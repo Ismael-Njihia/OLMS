@@ -3,7 +3,7 @@ import Layout from "../components/Layout"
 import { useSelector, useDispatch } from 'react-redux';
 import {Row, Col, ListGroup, Image, Form, Button, Card} from 'react-bootstrap'
 import { FaTrash } from "react-icons/fa";
-import {removeFromBasket} from '../slices/cartSlice'
+import {removeFromBasket, clearFromBasket} from '../slices/cartSlice'
 import {Link, useNavigate} from 'react-router-dom'
 import CustomMany from "../components/CustomMany";
 import { useState } from "react";
@@ -20,6 +20,9 @@ const CartPage = () => {
   const [showModal, setShowModal] = useState(false);
   const handleRemoveFromBasket = (id) => {
     dispatch(removeFromBasket(id));
+  }
+  const handleClearFromBasket = () => {
+    dispatch(clearFromBasket());
   }
   const handleShowModal = () =>{
     setShowModal(true);
@@ -92,6 +95,18 @@ const CartPage = () => {
       onClick={handleShowModal}
     >
       Give to User
+    </Button>
+  )}
+</div>
+
+<div className="giveUserButton">
+  {allowed && basketItems.length > 0 && (
+    <Button style={{marginTop: "20px"}}
+      type='button'
+      className='btn-varient-info btn-block'
+      onClick={handleClearFromBasket}
+    >
+      Clear Cart
     </Button>
   )}
 </div>
