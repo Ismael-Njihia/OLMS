@@ -131,6 +131,58 @@ const logoutUser = asyncHandler(async (req, res) => {
     })
 })
 
+//get a user by id
+//GET /api/users/:id
+//private
+const getUserById = asyncHandler(async (req, res) => {
+    const {id} = req.params;
+
+    const user = await prisma.user.findFirst({
+        where: {
+            user_id: id
+        }
+    });
+    if(!user){
+        res.status(400);
+        throw new Error("User not found");
+    }
+    res.status(201).json({
+        first_name: user.first_name,
+        last_name: user.last_name,
+        user_id: user.user_id,
+        username: user.username,
+        email: user.email,
+        user_type: user.user_type,
+        registration_date: user.registration_date,
+    })
+})
+
+//link user with transaction table - borrower_id
+//GET /api/users/transactions/:id
+//private
+const getUserTransactions = asyncHandler(async (req, res) => {
+    const {id} = req.params;
+    console.log(id + "looking for transactions");
+
+    const user = await prisma.user.findFirst({
+        where: {
+            user_id: id
+        }
+    });
+    if(!user){
+        res.status(400);
+        throw new Error("User not found");
+    }
+    const transactions = await prisma.transaction.findMany({
+        where: {
+            borrower_id: id
+        }
+    });
+    res.status(201).json({
+        transactions
+    })
+})
 
 
-export {getAllUsers, registerUser, loginUser, logoutUser};
+
+export {getAllUsers, registerUser, loginUser, logoutUser, getUserById, getUserTransactions};

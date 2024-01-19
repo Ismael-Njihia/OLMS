@@ -25,6 +25,7 @@ const LoginPage = () => {
             navigate(redirect);
         }
     },[navigate, userInfo, redirect])
+    
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
     }

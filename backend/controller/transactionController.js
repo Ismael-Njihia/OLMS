@@ -332,7 +332,6 @@ let today= new Date();
 //make return_date_date more readable
 const return_date_date = today.toDateString();
 
-
 sendReturnEmail(email, first_Name, last_Name, transation_id,return_date_date);
 
     res.status(200).json({

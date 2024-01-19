@@ -30,6 +30,19 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Users']
         }),
+        getUserById: builder.query({
+            query: (id) => ({
+                url: `${USERS_URL}/${id}`,
+                method: 'GET'
+            })
+        }),
+        getTransactionsOfUser: builder.query({
+            query: (id) => ({
+                url: `${USERS_URL}/transactions/${id}`,
+                method: 'GET'
+            })
+        
+        }),
     })
 })
 
@@ -38,4 +51,6 @@ export const {
     useLoginMutation,
     useRegisterMutation,
     useLogoutMutation,
+    useGetUserByIdQuery,
+    useGetTransactionsOfUserQuery
 } = usersApiSlice;

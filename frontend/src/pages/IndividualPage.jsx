@@ -120,7 +120,7 @@ const IndividualPage = () => {
                         <div className='userInfo'>
                             <ListGroup variant='flush'>
                                 <ListGroup.Item>
-                                    <h6>User Id: {data?.user?.user_id}</h6>
+                                    <h6>User Id: <Link to={`/user/${data?.user?.user_id}`}>{data?.user?.user_id}</Link></h6>
                                 </ListGroup.Item>
                                 <ListGroup.Item>
                                     <h6>Borrower's Name: {data?.user?.first_name +" " + data?.user?.last_name}</h6>
