@@ -1,21 +1,34 @@
 // Importing necessary dependencies and components
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo,useState } from 'react'
+import "../assets/Layout.css"
 import { useParams } from 'react-router-dom'
 import Layout from '../components/Layout'
 import Header from '../components/Header'
 import { useGetTransactionQuery } from "../slices/TransactionApiSlice"
 import { toast } from "react-toastify"
 import { Link } from "react-router-dom"
-import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap'
+import { Row, Col, Image, ListGroup, Card, Button, Modal, Table } from 'react-bootstrap'
 import {useUpdateTransactionMutation} from "../slices/TransactionApiSlice"
 // IndividualPage functional component
 import {useFetchBooksQuery} from "../slices/BooksApiSlice"
+import { useSelector } from 'react-redux'
 
 const IndividualPage = () => {
     // Extracting the 'id' parameter from the URL using react-router-dom
+
+    
+    const userInfo = useSelector((state) => state.auth)
+    console.log(userInfo)
+    const servingName = userInfo.userInfo ? userInfo.userInfo.username : null;
+console.log(servingName);
+    
     const { id } = useParams()
+    const [showModal, setShowModal] = useState(false);
 
-
+    const handleToggleModal = () => {
+        setShowModal(!showModal);
+      };
+      
     // Sending id for a response using the useGetTransactionQuery hook
     const { data, error, isLoading } = useGetTransactionQuery(id)
     const [updateTransactionMutation] = useUpdateTransactionMutation()
@@ -35,23 +48,24 @@ const IndividualPage = () => {
         <ListGroup variant='flush'>
         <ListGroup.Item key={index}>
             <Row>
-                <Col md={1}>
-                <Image src={book.image_url} alt={book.title} fluid rounded/>
+            <Col md={1}>
+                <Image src={book.image_url} alt={book.title} fluid rounded />
                 </Col>
 
-                <Col md={2}>
-                    {book.title}
+                <Col md={4} style={{ fontSize: '12px' }}>
+                {book.title}
                 </Col>
 
-                <Col md={2}>
-                     {book.book_id}
+                <Col md={2} style={{ fontSize: '12px' }}>
+                {book.book_id}
                 </Col>
 
-                <Col md={2}>
-                 {book.author}
-                 </Col>
-                 <Col md={2}>
-                              Publishing Date: {book.published_date}
+                <Col md={2} style={{ fontSize: '12px' }}>
+                {book.author}
+                </Col>
+
+                <Col md={3} style={{ fontSize: '12px' }}>
+                Publishing Year: {book.published_date}
                 </Col>
 
             </Row>
@@ -76,7 +90,7 @@ const IndividualPage = () => {
     }
     // Rendering JSX elements
     return (
-        <>
+        <div className={showModal ? 'dark-overlay' : ''}>
        
             {/* Header component */}
             <Header />
@@ -162,7 +176,7 @@ const IndividualPage = () => {
                     <Button style={{marginTop: '20px'}}
                         type='button'
                         className='btn btn-block'
-                        disabled={data?.status === "returned"}
+                        
                     >
                         Delete Transaction
                     </Button>
@@ -173,13 +187,79 @@ const IndividualPage = () => {
                style={{marginLeft: '20px', marginTop: '20px'}}
                type='button'
                className='btn btn-block'
-               disabled={data?.status === "returned"}	
+               disabled={data?.status === "returned"}
+               onClick={handleToggleModal}	
                >
                 Print Receipt
 
                </Button>
             </Layout>
-        </>
+
+            {/* Modal to print receipt */}
+
+            <Modal show={showModal} onHide={handleToggleModal} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title style={{textAlign: 'center', fontSize:"14px"}}>OSHWAL LIBRARY </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body style={{ borderRadius: "3px",border: '2px solid #03117d', margin: "4px"}}>
+                    <div className='userInfo'>
+                        {/**Render User Info In a html format */}
+                        <h6 style={{marginLeft: "8px", fontSize: "12px"}}> Dear {data?.user?.first_name + " " + data?.user?.last_name}, Thankyou for using our services.</h6>
+                        <h6 style={{marginLeft: "8px", fontSize:"12px"}}> You have borrowed the following Materials:</h6>
+                        <hr style={{ border: '2px solid #03117d' }} />
+                        <div className='details'>
+                            {booksElements}
+                         </div>
+                    </div>
+                    <hr style={{ border: '2px solid #03117d' }} />
+                    <div className='TransactionDetails'>
+                    <Table striped bordered hover responsive style={{fontSize: "12px"}}>
+                        <tbody>
+                            <tr>
+                            <td>Transaction Id</td>
+                            <td>{id}</td>
+                            </tr>
+                            <tr>
+                            <td>Borrowed On</td>
+                            <td>{new Date(Number(data?.borrow_date) * 1000).toLocaleString()}</td>
+                            </tr>
+                            <tr>
+                            <td>Expected Return Date</td>
+                            <td>{new Date(Number(data?.expected_return_date) * 1000).toLocaleString()}</td>
+                            </tr>
+                            <tr>
+                            <td>Cost</td>
+                            <td>{data?.cost} KES</td>
+                            </tr>
+                            <tr>
+                            <td>Served By</td>
+                            <td>{servingName}</td>
+                            </tr>
+                        </tbody>
+                        </Table>
+                    </div>
+                    <hr style={{ border: '2px solid #03117d' }} />
+                    <div className='signOff'>
+                    <h6 style={{ height: "27px",backgroundColor: '#03117d', color: 'white', textAlign: 'center', borderRadius: "3px" }}>Oshwal Library, Nairobi</h6>
+                    </div>
+
+
+                </Modal.Body>
+                <p style={{fontSize: "10px"}}>
+                {data?.user?.user_id}
+                </p>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleToggleModal}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={() => {window.print()}}>
+                        Print
+                    </Button>
+                </Modal.Footer>
+             </Modal>
+        </div>
     )
 }
 

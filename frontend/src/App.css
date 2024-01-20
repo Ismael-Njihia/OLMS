@@ -23,3 +23,12 @@ P{
  z-index: 1000;
 
 }
+.dark-overlay {
+  background-color: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 110; /* Ensure it's above other elements */
+}

@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {useGetSettingsQuery} from '../slices/setingsApiSlice';
+import {useGetBookByIdQuery} from '../slices/BooksApiSlice';
 
 const CustomModal = ({ show, handleClose }) => {
   const { id } = useParams();
@@ -18,6 +19,10 @@ const CustomModal = ({ show, handleClose }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [borrower_id, setBorrower_id] = useState(null);
 
+  const decodedId = decodeURIComponent(id);
+  //get the Last 4 characters of the id
+  const lastFour = decodedId.substr(decodedId.length - 4);
+  const {data: book, isLoading: bookdetails, error, refetch} = useGetBookByIdQuery(lastFour);
   const [expected_return_date, setExpected_return_date] = useState(null);
 
   const { data: settings, isLoading: isLoadingSettings } = useGetSettingsQuery();
@@ -90,7 +95,7 @@ const CustomModal = ({ show, handleClose }) => {
         //close modal
         handleClose();
         //refresh page
-        window.location.reload();
+        refetch();
     } catch (error) {
         toast.error(error.data.message || 'Something went wrong');
         console.log(error);
