@@ -7,18 +7,23 @@ import { toast } from "react-toastify";
 import { Row, Col, Card, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import {useGetTransactionsOfUserQuery} from "../slices/usersApiSlice";
+import { useSelector } from "react-redux";
+import {useUpdateUserMutation} from "../slices/usersApiSlice";
+
 
 const UserPage = () => {
+  const { userInfo } = useSelector((state) => state.auth);
   const id = useParams().id;
-  const { data: user, isFetching } = useGetUserByIdQuery(id);
-  const [firstName, setFirstName] = useState(user?.first_name || "");
-  const [lastName, setLastName] = useState(user?.last_name || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [user_type, setUserType] = useState(user?.user_type || "");
-  const [registration_date, setRegistration_date] = useState(user?.registration_date || "");
+  const { data: user, isFetching, refetch } = useGetUserByIdQuery(id);
+  const [firstName, setFirstName] = useState(user ? user.first_name || "" : "");
+  const [lastName, setLastName] = useState(user ? user.last_name || "" : "");
+  const [email, setEmail] = useState(user ? user.email || "" : "");
+  const [user_type, setUserType] = useState(user ? user.user_type || "" : "");
+  const [registration_date, setRegistration_date] = useState(user ? user.registration_date || "" : "");
+  
   const { data: transactionsResponse, isFetching: isFetchingTransactions } = useGetTransactionsOfUserQuery(id);
+  const [updateUserMutation, { isUpdating: loadingUpdate }] = useUpdateUserMutation();
 
-  console.log(transactionsResponse);
 
 if (transactionsResponse && transactionsResponse.transactions.length > 0) {
   console.log(transactionsResponse.transactions[0]);
@@ -35,12 +40,28 @@ if (transactionsResponse && transactionsResponse.transactions.length > 0) {
     }
   }, [user]);
 
-  if (isFetching) return <div>Loading...</div>;
-
-  const handleDetailsUpdate = (e) => {
+  console.log(firstName, lastName, email, user_type)
+  const handleDetailsUpdate = async(e) => {
     e.preventDefault();
     // Handle the update logic here
     // For example, you can dispatch an action to update the user details
+    
+   try {
+    await updateUserMutation({
+      id: id,
+      user: {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        user_type: user_type,
+      },
+    })
+    toast.success("User Details Updated Successfully");
+    refetch()
+   } catch (error) {
+    toast.error(error.data.message|| "An error occured");
+    console.log(error);
+   }
   };
 
   const handleFirstNameChange = (e) => {
@@ -65,7 +86,9 @@ if (transactionsResponse && transactionsResponse.transactions.length > 0) {
         <Row>
           <Col md={6}>
             {/** Show the users details on a form */}
+            {userInfo.user_type === 'admin' && (
             <h6>Do You Wish to Change {firstName} {lastName}'s Details?</h6>
+            )}
             <form>
               <div className="form-group">
                 <label htmlFor="name">First Name</label>
@@ -124,6 +147,7 @@ if (transactionsResponse && transactionsResponse.transactions.length > 0) {
                   readOnly
                 />
               </div>
+              { userInfo && userInfo.user_type === 'admin' &&(
               <div className="submitBtn">
                 <button
                   style={{ marginTop: "20px" }}
@@ -134,6 +158,7 @@ if (transactionsResponse && transactionsResponse.transactions.length > 0) {
                   Update
                 </button>
               </div>
+              )}
             </form>
           </Col>
 

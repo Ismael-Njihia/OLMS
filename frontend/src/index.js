@@ -40,19 +40,22 @@ const routes = createBrowserRouter(
           <Route path='/profile' element={<Profile />} />
           <Route path='/transactions' element={<TransactionPage />} />
           <Route path='/transaction/:id' element={<IndividualPage />} />
+          <Route path='/users' element={<UsersPage />} />
+         <Route path='/user/:id' element={<UserPage />} />
+         <Route path='/cart' element={<CartPage />} />
           
         </Route>
        
         <Route path='/' element={<StaffRoute/>} >
-          
+       
           
 
         </Route>
         <Route path='/' element={<AdminRoute/>} >
-          <Route path='/users' element={<UsersPage />} />
-          <Route path='/user/:id' element={<UserPage />} />
+          
+         
           <Route path='/dashboard' element={<DashboardPage />} />
-          <Route path='/cart' element={<CartPage />} />
+         
 
           </Route>
     </Route>

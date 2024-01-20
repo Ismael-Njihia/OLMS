@@ -120,7 +120,6 @@ const loginUser = asyncHandler(async (req, res) => {
 //logout a user
 //GET /api/users/logout
 //private
-
 const logoutUser = asyncHandler(async (req, res) => {
     res.cookie("jwt", "",{
         expires: new Date(0),
@@ -183,6 +182,88 @@ const getUserTransactions = asyncHandler(async (req, res) => {
     })
 })
 
+//update user details
+//PUT /api/users/:id
+//private
+const updateUser = asyncHandler(async (req, res) => {
+    const {id} = req.params;
+    const {first_name, last_name, email, user_type} = req.body;
+    //check if there are null values
+    console.log(id + " This is the id");
+    console.log(first_name + " This is the first name");
+    if(!first_name || !last_name || !email){
+        res.status(400);
+        throw new Error("Please fill in all fields");
+    }
+    const userExists = await prisma.user.findFirst({
+        where: {
+            user_id: id
+        }
+    });
 
+    if(!userExists){
+        res.status(400);
+        throw new Error("User does not exist");
+    }
+    //edit the user where user_id = id
+    const user = await prisma.user.update({
+        where: {
+            user_id: id
+        },
+        data: {
+            first_name,
+            last_name,
+            email,
+            user_type
+        }
+    });
+    if(user){
+        res.status(201).json({
+            user_id: user.user_id,
+            username: user.username,
+            email: user.email,
+            user_type: user.user_type,
+            registration_date: user.registration_date,
+        })
+    }
+})
 
-export {getAllUsers, registerUser, loginUser, logoutUser, getUserById, getUserTransactions};
+//delete a user
+//DELETE /api/users/:id
+//private
+const deleteUser = asyncHandler(async (req, res) => {
+    const {id} = req.params;
+    console.log(id + " This is the id for delete");
+    const userExists = await prisma.user.findFirst({
+        where: {
+            user_id: id
+        }
+    });
+
+    if(!userExists){
+        throw new Error("User does not exist");
+    }
+    console.log(userExists + " This is the user")
+
+    const user = await prisma.user.delete({
+        where: {
+            user_id: id
+        }
+    });
+
+    if(user){
+        res.status(201).json({
+            message: "User deleted successfully"
+        })
+    }
+})
+
+export {getAllUsers, 
+    registerUser, 
+    loginUser, 
+    updateUser,
+    logoutUser, 
+    getUserById, 
+    getUserTransactions,
+    deleteUser
+};

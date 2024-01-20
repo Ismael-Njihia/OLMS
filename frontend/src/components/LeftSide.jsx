@@ -98,7 +98,7 @@ const handleShowModal = () => setShowModal(true);
 
        {/**Show  when there users when the userInfo.user_type */}
        {
-        userInfo && userInfo.user_type === 'admin' && (
+        userInfo && (userInfo.user_type === 'admin' || userInfo.user_type === 'staff') &&  (
           <div className='userContainer'>
             <div className='links'>
                 <Link to='/users' className='homeLink'>
