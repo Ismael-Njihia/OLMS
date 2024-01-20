@@ -20,11 +20,13 @@ import UserPage from './pages/UserPage';
 import IndividualPage from './pages/IndividualPage';
 import DashboardPage from './pages/DashboardPage';
 import CartPage from './pages/CartPage';
+import Overdue from './pages/Overdue';
 
 //Authorization Control
 import AdminRoute from './components/AdminRoute';
 import UserRoute from './components/UserRoute';
 import StaffRoute from './components/StaffRoute';
+
 const routes = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
@@ -43,6 +45,7 @@ const routes = createBrowserRouter(
           <Route path='/users' element={<UsersPage />} />
          <Route path='/user/:id' element={<UserPage />} />
          <Route path='/cart' element={<CartPage />} />
+         <Route path='/overdue' element={<Overdue />} />
           
         </Route>
        

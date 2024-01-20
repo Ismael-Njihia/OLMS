@@ -6,13 +6,15 @@ import '../assets/LeftSide.css';
 import { Link } from 'react-router-dom';
 import {useFetchGenresQuery} from '../slices/GenreApiSlice';
 import {Dropdown} from 'react-bootstrap';
-import { Modal } from 'react-bootstrap';
+import { Modal, Badge } from 'react-bootstrap';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLogoutMutation} from "../slices/usersApiSlice";
 import { logout } from '../slices/authSlice';
 import {toast} from 'react-toastify';
 import { BsPeople } from 'react-icons/bs';
 import { FaChartBar } from 'react-icons/fa';
+import { FaExclamationCircle } from 'react-icons/fa';
+import {useGetTransactionsQuery} from "../slices/TransactionApiSlice"
 
 const LeftSide = () => {
   const {data: genres, isLoading} = useFetchGenresQuery();
@@ -36,6 +38,18 @@ const LeftSide = () => {
   }
  const handleCloseModal = () => setShowModal(false);
 const handleShowModal = () => setShowModal(true);
+
+const { data: transactions, error, isLoading: loadingTrans } = useGetTransactionsQuery()
+
+const currentDate = Math.floor(Date.now()/1000);
+
+const overdueTransactions = transactions?.filter((transaction) => {
+    const expectedReturnDate = transaction.expected_return_date;
+    return currentDate > expectedReturnDate;
+})
+const count = overdueTransactions?.length;
+console.log(count);
+
  
   return (
    <>
@@ -94,6 +108,25 @@ const handleShowModal = () => setShowModal(true);
             </div>
         )
        }
+{
+        userInfo && (userInfo.user_type === 'admin' || userInfo.user_type === 'staff') && (
+          <div className='transactionContainer'>
+          <div className='links'>
+                <Link to='/overdue' className='homeLink'>
+                  <div className="position-relative">
+                    <FaExclamationCircle color='red' className='homeIcon' />
+                    {count > 0 && (
+                      <Badge pill bg="danger" style={{ position: "absolute", top: 0, right: 0 }}>
+                        {count}
+                      </Badge>
+                    )}
+                  </div>
+                  Overdue
+                </Link>
+              </div>
+            </div>
+        )
+       }
 
 
        {/**Show  when there users when the userInfo.user_type */}
@@ -102,7 +135,7 @@ const handleShowModal = () => setShowModal(true);
           <div className='userContainer'>
             <div className='links'>
                 <Link to='/users' className='homeLink'>
-                    <BsPeople className='homeIcon'/> users
+                    <BsPeople color='white' className='homeIcon'/> users
                 </Link>
                 </div>
             </div>
@@ -114,7 +147,7 @@ const handleShowModal = () => setShowModal(true);
        <div className='logoutContainer'>
         <div className='links'>
             <button to='/' className='homeLink' onClick={handleShowModal}>
-                <BsBoxArrowRight className='homeIcon'/> Logout
+                <BsBoxArrowRight  color="red" className='homeIcon'/> Logout
             </button>
         </div>
         </div>

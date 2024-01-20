@@ -5,6 +5,7 @@ import {useGetTransactionsQuery} from "../slices/TransactionApiSlice"
 import { Link, useNavigate } from "react-router-dom"
 import { Table } from "react-bootstrap"
 import {toast} from 'react-toastify';
+import { FaSync } from 'react-icons/fa';
 
 const TransactionPage = () => {
   const userInfo = useSelector((state) => state.auth)
@@ -14,8 +15,12 @@ const TransactionPage = () => {
     navigate('/login')
   }
  
-  const { data: transactions, error, isLoading } = useGetTransactionsQuery()
- console.log(transactions)
+  const { data: transactions, error, isLoading, refetch } = useGetTransactionsQuery()
+ const count = transactions?.length;
+
+  const handleReload = () => {
+    refetch();
+  }
   if(error){
     toast.error(error)
   }
@@ -23,6 +28,9 @@ const TransactionPage = () => {
     <>
     <Header />
     <Layout>
+    <div className="d-flex justify-content-between">
+            <FaSync onClick={handleReload} style={{cursor: "pointer", marginBottom: "10px"}}  color="blue"/>
+    </div>
      {isLoading ? (
       <p>Loading... Please Wait</p>
      ):(
@@ -37,7 +45,6 @@ const TransactionPage = () => {
             <th>fine (KSH) </th>
             <th> Expected Return Date</th>
             <th> Actual Return Date</th>
-            <th>View</th>
             <th> Status</th>
 
 
@@ -50,8 +57,16 @@ const TransactionPage = () => {
               
               <tr key={transaction.transation_id}   
              >
-                <td>{transaction.transation_id}</td>
-                <td>{transaction.book_id}</td>
+                 <td>
+                            <Link to={`/transaction/${transaction.transation_id}`}>
+                                {transaction.transation_id}
+                            </Link>
+                 </td>
+                <td>
+                            {transaction.book_id[0].length > 8
+                                ? `${transaction.book_id[0].slice(0, 8)}...`
+                                : transaction.book_id[0]}
+                </td>
                 <td>{new Date(Number(transaction.borrow_date) * 1000).toLocaleString()}</td>
 
                 <td>{transaction.user.first_name + " " + transaction.user.last_name}</td>
@@ -64,11 +79,6 @@ const TransactionPage = () => {
                   <p>-</p>
                   ):(
                 new Date(Number(transaction.return_date)).toLocaleString())}</td>
-                <td>
-                  <Link to={`/transaction/${transaction.transation_id}`}>
-                    View
-                  </Link>
-                </td>
                 <td>{transaction.status === "borrowed" ?(
                  <p style={{color: "red", fontSize: "15px", fontWeight:"bold"}}>{transaction.status}</p>
                 ):(
