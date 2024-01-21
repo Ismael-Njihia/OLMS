@@ -12,16 +12,11 @@ import {useUpdateTransactionMutation} from "../slices/TransactionApiSlice"
 // IndividualPage functional component
 import {useFetchBooksQuery} from "../slices/BooksApiSlice"
 import { useSelector } from 'react-redux'
+import Message from '../components/Message'
 
 const IndividualPage = () => {
-    // Extracting the 'id' parameter from the URL using react-router-dom
-
-    
     const userInfo = useSelector((state) => state.auth)
-    console.log(userInfo)
-    const servingName = userInfo.userInfo ? userInfo.userInfo.username : null;
-console.log(servingName);
-    
+    const servingName = userInfo.userInfo ? userInfo.userInfo.username : null;    
     const { id } = useParams()
     const [showModal, setShowModal] = useState(false);
 
@@ -33,16 +28,14 @@ console.log(servingName);
     const { data, error, isLoading } = useGetTransactionQuery(id)
     const [updateTransactionMutation] = useUpdateTransactionMutation()
     const {data: booksData, error: booksError, isLoading: booksLoading} = useFetchBooksQuery()
-    console.log(booksData)
-    //make bookIds an array
-  
-    const bookIds = data?.book_id
-    //console.log(bookIds)
+
+    const bookIds = data?.book_id;
+    const fine = data?.fine;
+    const cost = data?.cost;
+    const TotalCost = fine + cost;
     const bookIdsArray = Array.isArray(bookIds) ? bookIds : [bookIds];
-    console.log(bookIdsArray)
     //make Ids an array else none
     const filteredBooksData = booksData?.filter(book => bookIdsArray.includes(book.book_id));
-
     //console.log(JSON.stringify(filteredBooksData, null, 2), "filtered");
     const booksElements = filteredBooksData?.map((book, index)=>(
         <ListGroup variant='flush'>
@@ -96,6 +89,8 @@ console.log(servingName);
             <Header />
             {/* Layout component */}
             <Layout>
+                {/**Check fine and show Info */}
+                
                 {/* Link to navigate back to the transactions page */}
                 <Link className='btn btn-light my-3' to="/transactions">
                     Go Back
@@ -103,6 +98,13 @@ console.log(servingName);
                 {/* Check if the data is loading */}
                 {isLoading && <p>Loading...</p>}
                 {/* Give a heading with the transaction Id*/}
+                {
+                    fine > 0 && (
+                        <Message variant="danger">
+                           <p>This Transaction has accured a fine of {fine} KES. The Total amount to be paid is {TotalCost}</p>
+                        </Message>
+                    )
+                }
                 <h6 style={{textAlign: "center", color:"blue", marginBottom:"10px"}}>Transaction Id: {id}</h6>
                 {/* Check if the data is loading */}
                 <Row>

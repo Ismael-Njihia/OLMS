@@ -31,7 +31,7 @@ const BookPage = () => {
     //get the Last 4 characters of the id
     const lastFour = decodedId.substr(decodedId.length - 4);
     //get book by id
-    const {data: book, isLoading, error} = useGetBookByIdQuery(lastFour);
+    const {data: book, isLoading, error, refetch} = useGetBookByIdQuery(lastFour);
     console.log(book);
 
     const handleAddToBasket = () => {

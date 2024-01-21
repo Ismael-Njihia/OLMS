@@ -45,6 +45,14 @@ export const transactionApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Transactions']
         }),
+        sendLateReminders: builder.mutation({
+            query: (id) => ({
+                url: `${TRANSACTION_URL}/reminder/${id}`,
+                method: 'POST'
+            }),
+            invalidatesTags: ['Transactions']
+        
+        }),
     })
 });
 
@@ -55,5 +63,6 @@ export const {
     useManyTransactionMutation,
     useUpdateTransactionMutation,
     useDeleteTransactionMutation,
+    useSendLateRemindersMutation
 
 } = transactionApiSlice;

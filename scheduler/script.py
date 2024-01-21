@@ -22,7 +22,7 @@ def calculate_fine(expected_return_date):
          days = difference / 86400
             #calculate the fine
          print(days, " days")
-         fine = days * 30
+         fine = days * 100
          #round the fine to whole number
          fine = round(fine)
          print("Fine: ", fine)

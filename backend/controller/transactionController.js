@@ -5,6 +5,7 @@ import generateSecondSinceEpoch from "../util/generateSecSinceEpoch.js";
 import todaysDate from "../util/todaysDate.js";
 import sendTransactionEmail from "../util/emailTransCreated.js";
 import sendReturnEmail from "../util/emailReturned.js";
+import sendReminderLate from "../util/SendReminder.js";
 const getAllTransactions = async (req, res) => {
     const transactions = await prisma.transaction.findMany({
         include: {
@@ -364,11 +365,63 @@ const getTransaction = asyncHandler(async(req,res)=>{
     res.status(200).json(transaction);
 });
 
-//delete a transaction
-//DELETE /api/transactions/:id
-//Private for admin
+//send a reminder to the borrower
+//POST /api/transactions/reminder/:id
+//private
+//used by admin and staff
+const sendReminder = asyncHandler(async(req,res)=>{
+    const {id}= req.params;
+    console.log(id + " id")
+    const transaction = await prisma.transaction.findUnique({
+        where:{
+            transation_id: id,
+        },
+        include:{
+            user: true,
+            //book: true,
+        },
+    });
+
+    if(!transaction){
+        res.status(400).json({Transaction: "Does not exist"});
+    }
+
+    //get the borrower Info from the updated transaction
+    const borrower = await prisma.user.findUnique({
+        where:{
+            user_id: transaction.borrower_id,
+        },
+    });
+
+    if(!borrower){
+        res.status(400);
+        throw new Error(`Failed to get borrower Info with id: {transaction.borrower_id}`)
+    }
+    //send email to the borrower
+    const email = borrower.email;
+    const first_Name = borrower.first_name;
+    const last_Name = borrower.last_name;
+    const transation_id = transaction.transation_id;
+    const return_date_date = new Date(transaction.expected_return_date * 1000);
+    const fine = transaction.fine;
+    const totalCost = transaction.cost + transaction.fine;
+
+    sendReminderLate(email, first_Name, last_Name, transation_id, return_date_date, fine, totalCost);
+
+    res.status(200).json({
+        message: "Reminder Sent",
+        transaction: transaction,
+        
+    });
+})
 
 
 
 
-export {getAllTransactions,getTransaction, registerTransaction, transactionReturned, registerTransactionMany}
+export {
+    getAllTransactions,
+    getTransaction, 
+    registerTransaction, 
+    transactionReturned, 
+    sendReminder,
+    registerTransactionMany}

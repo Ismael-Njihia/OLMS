@@ -1,27 +1,49 @@
 import Header from "../components/Header";
 import Layout from "../components/Layout";
 import { useSelector } from "react-redux"
-import {useGetTransactionsQuery} from "../slices/TransactionApiSlice"
+import {useGetTransactionsQuery, useSendLateRemindersMutation} from "../slices/TransactionApiSlice"
 import { Link, useNavigate } from "react-router-dom"
 import { Table } from "react-bootstrap"
 import {toast} from 'react-toastify';
 import { FaSync } from 'react-icons/fa';
+import { Modal } from "react-bootstrap";
+import { useState } from "react";
 
 const Overdue = () => {
     const userInfo = useSelector((state) => state.auth)
-  
+    const [show, setShow] = useState(false);
+    const [selectedTransactionId, setSelectedTransactionId] = useState(null);
+    const [sendLateReminders] = useSendLateRemindersMutation()
+    const handleClose = () => setShow(false);
+    const handleShow = (transactionId) => {
+        setSelectedTransactionId(transactionId)
+        setShow(true)
+    };
+
     const { data: transactions, error, isLoading,refetch } = useGetTransactionsQuery()
-
     const currentDate = Math.floor(Date.now()/1000);
-
     const overdueTransactions = transactions?.filter((transaction) => {
         const expectedReturnDate = transaction.expected_return_date;
         return currentDate > expectedReturnDate;
     })
     const count = overdueTransactions?.length;
 
+
     const handleReload = () => {
         refetch();
+    }
+    const handleSendingAReminder = async() => {
+     try {
+        const {data} = await sendLateReminders(selectedTransactionId)
+        console.log(data)
+        toast.success(data.message)
+        handleClose()
+        refetch()
+        
+     } catch (error) {
+        toast.error(error|| "Something went wrong")
+        console.log(error)
+     }
     }
 
   return (
@@ -46,8 +68,9 @@ const Overdue = () => {
                 <th>Cost(KSH)</th>
                 <th>fine (KSH) </th>
                 <th> Expected Return Date</th>
-                
                 <th>Late By</th>
+                <th>Total</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -71,6 +94,14 @@ const Overdue = () => {
                             <td>{new Date(Number(transaction.expected_return_date) * 1000).toLocaleString()}</td>
                             
                             <td>{Math.floor((currentDate - transaction.expected_return_date)/(60*60*24))} days</td>
+                            <td>{transaction.cost + transaction.fine}</td>
+                            <td>
+                                <button
+                                onClick={() => handleShow(transaction.transation_id)}
+                                >
+                                    send reminder
+                                </button>
+                            </td>
                             </tr>
                     ))
                 }
@@ -78,6 +109,26 @@ const Overdue = () => {
          </Table>
         )
     }
+    <Modal show={show}  onHide={handleClose}>
+        <Modal.Header closeButton>
+            <Modal.Title>Send Reminder</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+            <p>Are you sure you want to send a reminder to this user?</p>
+            <p>Reminder will be sent to {selectedTransactionId}</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+            <button onClick={handleClose}>
+                Cancel
+            </button>
+            <button
+            onClick={handleSendingAReminder}>
+                Send
+            </button>
+        </Modal.Footer>
+     </Modal>
    </Layout>
    </>
   )
