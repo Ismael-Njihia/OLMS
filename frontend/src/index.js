@@ -21,6 +21,9 @@ import IndividualPage from './pages/IndividualPage';
 import DashboardPage from './pages/DashboardPage';
 import CartPage from './pages/CartPage';
 import Overdue from './pages/Overdue';
+import Duration from './pages/Duration';
+import Payment from './pages/Payment';
+import Read from './pages/Read';
 
 //Authorization Control
 import AdminRoute from './components/AdminRoute';
@@ -46,6 +49,9 @@ const routes = createBrowserRouter(
          <Route path='/user/:id' element={<UserPage />} />
          <Route path='/cart' element={<CartPage />} />
          <Route path='/overdue' element={<Overdue />} />
+          <Route path='/duration' element={<Duration />} />
+          <Route path='/payment' element={<Payment />} />
+          <Route path='/read' element={<Read />} />
           
         </Route>
        

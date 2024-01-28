@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import { useParams } from 'react-router-dom';
@@ -8,11 +9,11 @@ import {Row, Col, Image, ListGroup, Card, Button} from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import CustomModal from '../components/CustomModal';
 import { useState } from 'react';
-
 import { useDispatch } from 'react-redux';
+
 import { useNavigate } from 'react-router-dom';
 import { addToBasket } from '../slices/cartSlice';
-
+import {setBookPdf} from '../slices/readSlice';
 const BookPage = () => {
 
   const [showModal, setShowModal] = useState(false);
@@ -33,11 +34,26 @@ const BookPage = () => {
     //get book by id
     const {data: book, isLoading, error, refetch} = useGetBookByIdQuery(lastFour);
     console.log(book);
-
+    const bookPdf = book?.image_url;
+    
+    //let bookPDF = "/Pdf/dsa.pdf";
+    
     const handleAddToBasket = () => {
       dispatch(addToBasket(book));
       navigate('/cart');
     };
+
+    const readOnlineHandler = () => {
+      console.log(bookPdf + "read Online Handler");
+      if(!book){
+        console.error("Book not found");
+        return;
+      }
+      dispatch(setBookPdf(bookPdf));
+      navigate('/duration');
+    }
+   
+
    const userInfo = useSelector((state) => state.auth);
    //get user_type in local storage
     const userType = localStorage.getItem('user_type');
@@ -197,6 +213,19 @@ const BookPage = () => {
                   )
                 }
                 </ListGroup.Item>
+
+                <ListGroup.Item>
+                  { 
+                  <Button
+                  className='btn-varient-info btn-block'
+                  type='button'
+                  onClick={readOnlineHandler}
+                  >
+                    Read Online
+                  </Button>
+
+                  }
+                  </ListGroup.Item>
 
              
                 
