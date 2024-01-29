@@ -1,6 +1,6 @@
 import Header from "../components/Header";
 import Layout from "../components/Layout";
-import { Form, Button } from "react-bootstrap";
+import {Form, Button, Col, Row} from "react-bootstrap";
 import { useState } from "react";
 import ReadOnlineSteps from "../components/ReadOnlineSteps";
 import { setHours } from "../slices/HoursSlice";
@@ -28,6 +28,9 @@ const Duration = () => {
         <ReadOnlineSteps step1 step2 />
 
         <Form>
+        <Row>
+
+        <Col md={6}>
           <Form.Group controlId="duration">
             <Form.Label>Duration</Form.Label>
             <Form.Control
@@ -35,23 +38,29 @@ const Duration = () => {
               value={duration}
               onChange={handleDuration}
             >
-              {[...Array(10).keys()].map((hour) => (
+              {[...Array(24).keys()].map((hour) => (
                 <option key={hour + 1} value={hour + 1}>
                   {hour + 1} hour{hour !== 0 && "s"}
                 </option>
               ))}
             </Form.Control>
           </Form.Group>
+        </Col>
+          
 
           <br />
 
+         <Col md={6}>
           <Button
+          style={{marginTop: "30px"}}
             type="button"
             variant="primary"
             onClick={handleDispatch}
           >
             Continue
           </Button>
+          </Col>
+        </Row>
         </Form>
       </Layout>
     </>

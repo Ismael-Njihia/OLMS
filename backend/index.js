@@ -25,7 +25,10 @@ app.use('/api/genres', genreRoute);
 app.use('/api/upload', uploadRoute);
 app.use('/api/settings', settingRoute);
 
-app.use('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID));
+console.log(process.env.PAYPAL_CLIENT_ID);
+
+app.get('/api/config/paypal', (req, res) => res.send({
+    clientId: process.env.PAYPAL_CLIENT_ID}));
 
 
 const __dirname = path.resolve();
