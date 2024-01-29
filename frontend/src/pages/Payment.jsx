@@ -1,7 +1,7 @@
 import Header from "../components/Header"
 import Layout from "../components/Layout"
 import ReadOnlineSteps from "../components/ReadOnlineSteps"
-import {Form, Button, col, Row} from "react-bootstrap"
+import {Form, Button, Row} from "react-bootstrap"
 import {useState, useEffect} from "react"
 import {useDispatch, useSelector} from "react-redux"
 import { useNavigate } from "react-router-dom"
@@ -10,10 +10,13 @@ import { PayPalButtons , usePayPalScriptReducer} from "@paypal/react-paypal-js"
 import {useGetPaypalClientIdQuery} from "../slices/TransactionApiSlice"
 import {toast} from "react-toastify"
 import { ListGroup, Col } from "react-bootstrap"
+import {useCreateOnlineMutation} from "../slices/onlineApiSlice"
 
 const Payment = () => {
   //make sure local storage for Hours and bookPdf are filled using useSelector
   const hours = useSelector((state) => state.hours);
+  //Parse the hours to a Int
+  const hoursInt = parseInt(hours);
   const bookPdf = useSelector((state) => state.bookPdf);
  const pricePerHour = 0.15;
  const totalPrice = hours * pricePerHour;
@@ -22,6 +25,7 @@ const Payment = () => {
   const [{isPending}, paypalDispatch] = usePayPalScriptReducer();
   const {data: paypal, isLoading: loadingPayPal, error: errorPayPal} = useGetPaypalClientIdQuery();
 
+  const [createOnline, {data: onlineData, isLoading: loadingOnline, error: errorOnline}] = useCreateOnlineMutation();
   console.log('PayPal Data:', paypal);
 
   console.log('PayPal Error:', errorPayPal);
@@ -69,6 +73,8 @@ const Payment = () => {
 
   function onApprove(data, actions){
     return actions.order.capture().then(function(details){
+      console.log(details);
+      createOnline({duration: hoursInt, book_id: bookPdf, cost: totalPrice});
       toast.success("Payment Successful");
       navigate('/read');
     })
@@ -86,6 +92,8 @@ const Payment = () => {
     <ReadOnlineSteps step1 step2 step3/>
         <Message variant='info'>You have selected {hours} hour{hours !== 1 && 's'} for ${totalPrice}</Message>
 
+{ errorOnline && <Message variant='danger'>{errorOnline}</Message>}
+{ loadingOnline && <Message variant='info'>Loading, Please Hold</Message>}
         <Row>
           <Col md={6}>
             <ListGroup variant='flush'>

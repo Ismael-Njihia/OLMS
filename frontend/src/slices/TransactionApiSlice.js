@@ -57,10 +57,10 @@ export const transactionApiSlice = apiSlice.injectEndpoints({
             query: () => ({
                 url: PAYPAL_URL,
                 method: 'GET'
-
             }),
             keepUnusedDataFor: 5
         })
+        
 
     })
 });

@@ -9,6 +9,7 @@ import path from 'path';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import uploadRoute from './route/uploadRoute.js';
 import settingRoute from './route/settingRoute.js';
+import onlineRoute from './route/onlineRoute.js';
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ app.use('/api/transactions', transactionRoute);
 app.use('/api/genres', genreRoute);
 app.use('/api/upload', uploadRoute);
 app.use('/api/settings', settingRoute);
+app.use('/api/online', onlineRoute);
 
 console.log(process.env.PAYPAL_CLIENT_ID);
 

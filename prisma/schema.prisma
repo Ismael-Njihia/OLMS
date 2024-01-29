@@ -61,5 +61,18 @@ model user {
   user_type         String?       @db.VarChar(30)
   registration_date String?
   book              book[]
+  online            online[]
   transaction       transaction[]
+}
+
+model online {
+  user_id       String?
+  transactionId String  @id
+  cost          Float?
+  duration      Float?
+  startTime     String?
+  stopTime      String?
+  status        String?
+  book_id       String?
+  user          user?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_online_user")
 }
