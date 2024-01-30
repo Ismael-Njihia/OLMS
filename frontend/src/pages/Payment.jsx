@@ -11,11 +11,13 @@ import {useGetPaypalClientIdQuery} from "../slices/TransactionApiSlice"
 import {toast} from "react-toastify"
 import { ListGroup, Col } from "react-bootstrap"
 import {useCreateOnlineMutation} from "../slices/onlineApiSlice"
+import { setStartTime } from "../slices/startTimeSlice"
 
 const Payment = () => {
   //make sure local storage for Hours and bookPdf are filled using useSelector
   const hours = useSelector((state) => state.hours);
   //Parse the hours to a Int
+  const dispatch = useDispatch();
   const hoursInt = parseInt(hours);
   const bookPdf = useSelector((state) => state.bookPdf);
  const pricePerHour = 0.15;
@@ -34,6 +36,17 @@ const Payment = () => {
       navigate('/duration');
     }
   })
+
+  useEffect(() => {
+    if(onlineData){
+      toast.success(`You can now read the book for the next ${hours} hours`);
+      console.log(onlineData);
+      let stopTime = onlineData.stopTime;
+      console.log(stopTime);
+      dispatch(setStartTime(stopTime));
+      navigate('/read');
+    }
+  }, [onlineData, hours, navigate, dispatch])
 
   useEffect(() => {
     if(!bookPdf){
@@ -76,7 +89,7 @@ const Payment = () => {
       console.log(details);
       createOnline({duration: hoursInt, book_id: bookPdf, cost: totalPrice});
       toast.success("Payment Successful");
-      navigate('/read');
+      
     })
   }
 

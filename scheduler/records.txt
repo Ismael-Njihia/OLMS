@@ -1,5 +1,6 @@
-Current run time: 2024-01-29 09:34:20.332857
-Number of records: 10
+Current run time: 2024-01-30 09:34:20.990686
+Number of records: 11
+('1706427916', '1706510930', 'borrowed')
 ('1705694413', '1706037504', 'borrowed')
 ('1705749228', '1706004644', 'borrowed')
 ('1705764803', '1706105996', 'borrowed')
