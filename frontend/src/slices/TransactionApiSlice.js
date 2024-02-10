@@ -1,4 +1,4 @@
-import { TRANSACTION_URL, PAYPAL_URL } from "../constants";
+import { TRANSACTION_URL, PAYPAL_URL, ONLINE_URL } from "../constants";
 import {apiSlice} from "./apiSlice";
 
 export const transactionApiSlice = apiSlice.injectEndpoints({
@@ -59,7 +59,14 @@ export const transactionApiSlice = apiSlice.injectEndpoints({
                 method: 'GET'
             }),
             keepUnusedDataFor: 5
-        })
+        }),
+        getAllOnlineTransactions: builder.query({
+            query: () => ({
+                url: ONLINE_URL,
+                method: 'GET'
+            })
+        }),
+        
         
 
     })
@@ -73,6 +80,7 @@ export const {
     useUpdateTransactionMutation,
     useDeleteTransactionMutation,
     useSendLateRemindersMutation,
-    useGetPaypalClientIdQuery
+    useGetPaypalClientIdQuery,
+    useGetAllOnlineTransactionsQuery
 
 } = transactionApiSlice;

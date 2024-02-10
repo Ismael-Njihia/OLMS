@@ -25,6 +25,7 @@ import Overdue from './pages/Overdue';
 import Duration from './pages/Duration';
 import Payment from './pages/Payment';
 import Read from './pages/Read';
+import Online from './pages/Online';
 
 //Authorization Control
 import AdminRoute from './components/AdminRoute';
@@ -53,6 +54,7 @@ const routes = createBrowserRouter(
           <Route path='/duration' element={<Duration />} />
           <Route path='/payment' element={<Payment />} />
           <Route path='/read' element={<Read />} />
+          <Route path='/online' element={<Online />} />
           
         </Route>
        

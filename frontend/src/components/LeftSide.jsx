@@ -127,6 +127,17 @@ console.log(count);
             </div>
         )
        }
+        {
+        userInfo && (userInfo.user_type === 'admin' || userInfo.user_type === 'staff') &&  (
+          <div className='userContainer'>
+            <div className='links'>
+                <Link to='/online' className='homeLink'>
+                    <BiTransfer color='white' className='homeIcon'/> Online Transactions
+                </Link>
+                </div>
+            </div>
+        ) 
+       }
 
 
        {/**Show  when there users when the userInfo.user_type */}

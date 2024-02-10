@@ -6,7 +6,13 @@ import generateRandom from "../util/generateRandom.js";
 
 const getAllOnline = asyncHandler(async (req, res) => {
     try {
-        const online = await prisma.online.findMany();
+        const online = await prisma.online.findMany(
+            {
+                include: {
+                    user: true
+                }
+            }
+        );
         res.json(online);
     } catch (error) {
         console.error(error);
