@@ -21,7 +21,11 @@ const Payment = () => {
   const hoursInt = parseInt(hours);
   const bookPdf = useSelector((state) => state.bookPdf);
  const pricePerHour = 0.15;
- const totalPrice = hours * pricePerHour;
+ const totalPrice = (hours * pricePerHour).toFixed(2);
+
+
+ //change total price to only 2 decimals
+
   const navigate = useNavigate();
 
   const [{isPending}, paypalDispatch] = usePayPalScriptReducer();

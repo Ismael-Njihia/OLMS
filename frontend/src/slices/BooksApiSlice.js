@@ -34,6 +34,14 @@ export const bookApiSlice = apiSlice.injectEndpoints({
                 body,
             }),
         }),
+        editABook: builder.mutation({
+            query: ({ id, ...body }) => ({
+                url: `${BOOK_URL}/${id}`,
+                method: "PUT",
+                body
+            })
+        })
+        
     }),
 });
 
@@ -41,4 +49,5 @@ export const { useFetchBooksQuery,
     useAddBookMutation,
     useUploadImageMutation,
     useGetManyBooksMutation,
+    useEditABookMutation,
     useGetBookByIdQuery } = bookApiSlice;

@@ -165,6 +165,67 @@ const getBookById = asyncHandler(async (req, res) => {
     res.json(book);
 });
 
+//Edit a  book
+//PUT /api/books/:id
+//Private
+const updateBook = asyncHandler(async (req, res) => {
+    const { title, author, isbn, genre, published_date, total_copies, image_url, description_} = req.body;
+    const {id} = req.params;
+    const BookId = 'OLMS/' + id;
+    console.log(BookId);
+    const userId = req.user.user_id;
+    const user_type = req.user.user_type;
+    if (user_type === "user") {
+        res.status(401).json({ error: "Unauthorized to update Books!" });
+        return;
+    }
+   //check if the book_id exists from the book table
+   const bookExists = await prisma.book.findFirst({
+    where: {
+        book_id: BookId
+    }
+   })
+    if(!bookExists){
+     res.status(404).json({ error: "Book not found" });
+     return;
+    }
+
+    //check if the user_id exists from the user table
+    const userExists = await prisma.user.findFirst({
+        where: {
+            user_id: userId
+        }
+    });
+    if (!userExists) {
+        res.status(400).json({ error: "User does not exist" });
+        return;
+    }
+    //update details
+    const book = await prisma.book.update({
+        where: {
+            book_id: BookId
+        },
+        data: {
+            title,
+            author,
+            isbn,
+            published_date,
+            available_copies: total_copies,
+            total_copies,
+            image_url,
+            description_: description_,
+            user_id: userId,
+            genre_id: genre,
+        }
+    });
+    if(!book){
+        res.status(400).json({ error: "Failed to Update"});
+        return;
+    }
+
+    res.status(201).json(book);
+});
 
 
-export {getAllBooks, registerBook, getBookById, getManyBooks}
+
+export {getAllBooks, registerBook, getBookById,updateBook, getManyBooks}
